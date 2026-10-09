@@ -1,4 +1,5 @@
 /* src/letter/message-box/MessageBox.tsx */
+import { useRef, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { Text } from '../text'
 import { getMessageBoxVariant, getMessageBoxAnimation } from './index'
@@ -26,6 +27,14 @@ export default function MessageBox({
 }: Props) {
   const variantConfig = getMessageBoxVariant(variant)
   const animConfig = getMessageBoxAnimation(animation)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    if (!editable || !textareaRef.current) return
+    const el = textareaRef.current
+    el.style.height = 'auto'
+    el.style.height = el.scrollHeight + 'px'
+  }, [content, editable])
 
   if (editable) {
     return (
@@ -36,12 +45,13 @@ export default function MessageBox({
         transition={animConfig?.variants?.transition ?? {}}
         className={`${variantConfig?.className ?? ''} px-5 py-3 rounded-2xl w-full`}
       >
-        <input
-          type="text"
+        <textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
-          className="w-full bg-transparent border-none outline-none text-gray-800 placeholder-gray-400 text-base"
+          rows={2}
+          className="w-full bg-transparent border-none outline-none resize-none text-gray-800 placeholder-gray-400 text-base leading-relaxed md:min-h-[96px] min-h-[64px]"
         />
       </motion.div>
     )

@@ -1,84 +1,140 @@
 /* src/pages/LetterView.tsx */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router'
-import { motion } from 'motion/react'
+import { FaCamera, FaDownload } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
+import { getLetter, replyLetter, saveNote } from '../core/lib/api'
+import { renderLetterToCanvas, downloadDataUrl } from '../core/lib/canvas'
+import { generateStandaloneHTML } from '../core/lib/standalone-html'
 
 export function LetterView() {
   const { sender, slug } = useParams()
-  const [replied, setReplied] = useState(false)
-  const [reply, setReply] = useState<string | null>(null)
-  const [note, setNote] = useState('')
+  const [letter, setLetter] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [existingReply, setExistingReply] = useState<{ reply: string; note: string } | null>(null)
 
-  // Yeh data baad mein DB se aayega
-  const letter = {
-    pattern: 'two-choice' as PatternId,
-    senderName: sender ?? 'Someone',
-    recipientName: slug ?? 'You',
-    message: 'You are the most beautiful thing that happened to me. Every moment with you feels like a dream. Will you be mine? 💕',
-    config: {
-      background: 'blue',
-      effect: 'hearts',
-      textVariant: 'romantic',
-      textAnimation: 'fade',
-      messageBox: { variant: 'romantic', animation: 'fade' },
-      noteEnabled: true,
-      header: { enabled: false, text: '', variant: 'romantic', animation: 'fade' },
-      buttons: {
-        yes: { text: 'Yes 💕', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: 'pulse' },
-        no: { text: 'No', color: 'gray', shape: 'pill', size: 'md', variant: 'solid', animation: 'runaway' },
-      },
-    },
+  useEffect(() => {
+    if (!sender || !slug) return
+    getLetter(sender, slug)
+      .then((data) => {
+        setLetter(data)
+        if (data.status === 'replied') {
+          setExistingReply({
+            reply: data.reply ?? '',
+            note: data.replyNote ?? '',
+          })
+        }
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false))
+  }, [sender, slug])
+
+  const handleReply = async (replyText: string) => {
+    if (!sender || !slug) return
+    await replyLetter(sender, slug, replyText)
+    setExistingReply({ reply: replyText, note: '' })
   }
 
-  const handleReply = (buttonText: string, replyNote: string) => {
-    setReply(buttonText)
-    setNote(replyNote)
-    setReplied(true)
-    // Baad mein DB mein save karenge
+  const handleNote = async (note: string) => {
+    if (!sender || !slug) return
+    await saveNote(sender, slug, note)
+    setExistingReply((prev) => (prev ? { ...prev, note } : { reply: '', note }))
   }
 
-  if (replied) {
+  const handleSaveImage = () => {
+    if (!letter) return
+    const dataUrl = renderLetterToCanvas({
+      recipientName: letter.recipientName,
+      message: letter.message,
+      reply: existingReply?.reply ?? '',
+      note: existingReply?.note ?? '',
+    })
+    downloadDataUrl(dataUrl, `letter-${slug}.png`)
+  }
+
+  const handleDownloadHTML = () => {
+    if (!letter) return
+    const html = generateStandaloneHTML({
+      recipientName: letter.recipientName,
+      message: letter.message,
+      reply: existingReply?.reply ?? '',
+      note: existingReply?.note ?? '',
+      background: letter.config.background,
+      effect: letter.config.effect,
+      messageBoxVariant: letter.config.messageBox.variant,
+      textVariant: letter.config.textVariant,
+      textAnimation: letter.config.textAnimation,
+    })
+    const blob = new Blob([html], { type: 'text/html' })
+    const url = URL.createObjectURL(blob)
+    downloadDataUrl(url, `letter-${slug}.html`)
+    URL.revokeObjectURL(url)
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">Loading letter...</div>
+      </div>
+    )
+  }
+
+  if (error || !letter) {
     return (
       <div className="min-h-screen flex flex-col">
-        <div className="flex-1 bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="bg-white p-10 rounded-3xl shadow-2xl max-w-md w-full text-center"
-          >
-            <div className="text-6xl mb-4">💕</div>
-            <h2 className="text-2xl font-bold text-pink-600 mb-2">
-              Thank you!
-            </h2>
-            <p className="text-gray-600">
-              You replied: <strong>{reply}</strong>
-            </p>
-            {note && (
-              <p className="text-gray-500 text-sm mt-3 italic">"{note}"</p>
-            )}
-          </motion.div>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="text-center">
+            <div className="text-6xl mb-4">💔</div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">Letter not found</h2>
+            <p className="text-gray-500">{error || 'This letter may have expired.'}</p>
+          </div>
         </div>
         <Footer />
       </div>
     )
   }
 
-  const PatternComponent = PATTERNS[letter.pattern]
+  const actions = existingReply ? (
+    <>
+      <button
+        onClick={handleSaveImage}
+        className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
+      >
+        <FaCamera />
+        Save as Image
+      </button>
+      <button
+        onClick={handleDownloadHTML}
+        className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
+      >
+        <FaDownload />
+        Download HTML
+      </button>
+    </>
+  ) : null
+
+  const PatternComponent = PATTERNS[letter.pattern as PatternId]
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-1">
+      <div className="flex-1 flex">
         <PatternComponent
           config={{
             ...letter.config,
             message: letter.message,
-          } as any}
+          }}
           onReply={handleReply}
+          onNote={handleNote}
+          existingReply={existingReply}
+          senderName={letter.senderName}
+          recipientName={letter.recipientName}
         />
       </div>
-      <Footer />
+      <Footer actions={actions} />
     </div>
   )
 }
+
+export default LetterView

@@ -16,7 +16,7 @@ export default function Background({
   return (
     <div
       className={`
-        relative w-full h-full
+        relative w-full min-h-screen
         ${variantConfig?.className ?? ''}
         flex items-center justify-center
         p-6 overflow-hidden

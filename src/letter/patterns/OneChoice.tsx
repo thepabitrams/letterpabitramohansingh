@@ -1,9 +1,11 @@
+/* src/letter/patterns/OneChoice.tsx */
 import { useState } from 'react'
 import { Background } from '../background'
 import { Effect } from '../effect'
 import { Text } from '../text'
 import { MessageBox } from '../message-box'
 import { Button } from '../button'
+import { getTextVariant } from '../text'
 
 export type OneChoiceConfig = {
   header?: { enabled: boolean; text: string; variant: string; animation: string }
@@ -19,47 +21,60 @@ export type OneChoiceConfig = {
 
 type Props = {
   config: OneChoiceConfig
-  onReply: (reply: string, note: string) => void
+  onReply: (reply: string) => void
+  onNote: (note: string) => void
+  existingReply?: { reply: string; note: string } | null
+  senderName?: string
+  recipientName?: string
   preview?: boolean
 }
 
-type Step = 'choice' | 'note' | 'done'
+type Step = 'choice' | 'note'
 
-export default function OneChoice({ config, onReply, preview = false }: Props) {
+export default function OneChoice({ config, onReply, onNote, existingReply, senderName, recipientName, preview = false }: Props) {
   const [step, setStep] = useState<Step>('choice')
   const [note, setNote] = useState('')
+  const [saving, setSaving] = useState(false)
 
+  const isReplied = !!existingReply
   const showChoice = preview || step === 'choice'
   const showNote = preview || step === 'note'
+  const replyText = existingReply?.reply ?? ''
+  const replyNote = existingReply?.note ?? ''
+  const textVariantConfig = getTextVariant(config.textVariant)
 
-  const handleButton = () => {
-    if (preview) return
+  const handleButton = async () => {
+    if (preview || isReplied) return
+    setSaving(true)
+    await onReply(config.button.text)
+    setSaving(false)
     setStep('note')
   }
 
-  const handleSubmit = () => {
-    if (preview) return
-    setStep('done')
-    onReply(config.button.text, note)
+  const handleSubmit = async () => {
+    if (preview || isReplied) return
+    setSaving(true)
+    await onNote(note)
+    setSaving(false)
   }
 
-  const handleSkip = () => {
-    if (preview) return
-    setStep('done')
-    onReply(config.button.text, '')
+  const handleSkip = async () => {
+    if (preview || isReplied) return
+    await onNote('')
   }
 
   return (
     <Background variant={config.background}>
       <Effect variant={config.effect} />
       <div className="relative z-10 max-w-md w-full space-y-4">
+        {senderName && (
+          <p className="text-center text-xs tracking-[0.3em] text-gray-500 font-semibold">
+            From <span className="uppercase">{senderName}</span>
+          </p>
+        )}
+
         {config.header?.enabled && (
-          <Text
-            content={config.header.text}
-            variant={config.header.variant}
-            animation={config.header.animation}
-            as="heading"
-          />
+          <Text content={config.header.text} variant={config.header.variant} animation={config.header.animation} as="heading" />
         )}
 
         <MessageBox
@@ -84,7 +99,7 @@ export default function OneChoice({ config, onReply, preview = false }: Props) {
           </div>
         )}
 
-        {showNote && (
+        {showNote && !isReplied && (
           <div className="space-y-3">
             <MessageBox
               content={note}
@@ -98,13 +113,14 @@ export default function OneChoice({ config, onReply, preview = false }: Props) {
               {!preview && (
                 <button
                   onClick={handleSkip}
-                  className="px-5 py-2 text-sm text-gray-600 hover:text-gray-900"
+                  disabled={saving}
+                  className="px-5 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
                 >
                   Skip
                 </button>
               )}
               <Button
-                text={config.submitButton.text}
+                text={saving ? 'Saving...' : config.submitButton.text}
                 color={config.submitButton.color as any}
                 shape={config.submitButton.shape as any}
                 size={config.submitButton.size as any}
@@ -113,6 +129,19 @@ export default function OneChoice({ config, onReply, preview = false }: Props) {
                 onClick={handleSubmit}
               />
             </div>
+          </div>
+        )}
+
+        {isReplied && (
+          <div className="text-center space-y-2 pt-1">
+            <p className="text-xs tracking-[0.2em] text-gray-600 font-semibold">
+              <span className="uppercase">{recipientName}</span> Replied <span className="text-pink-600">{replyText}</span>
+            </p>
+            {replyNote && (
+              <div className={`${textVariantConfig?.bodyClass ?? 'text-base text-gray-700 leading-relaxed'} italic`}>
+                "{replyNote}"
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,10 +1,14 @@
 /* src/core/components/layout/Footer.tsx */
 import { FaCoffee, FaGithub } from 'react-icons/fa'
 
-export function Footer() {
+type Props = {
+  actions?: React.ReactNode
+}
+
+export function Footer({ actions }: Props) {
   return (
     <footer className="bg-white border-t border-gray-200">
-      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <a
             href="https://buymeacoffee.com"
@@ -26,10 +30,15 @@ export function Footer() {
           </a>
         </div>
 
-        <p className="text-xs text-gray-400">
-          © {new Date().getFullYear()} Pabitra Mohan Singh
-        </p>
+        <div className="flex items-center gap-4">
+          {actions}
+          <p className="text-xs text-gray-400">
+            © {new Date().getFullYear()} Pabitra Mohan Singh
+          </p>
+        </div>
       </div>
     </footer>
   )
 }
+
+export default Footer
