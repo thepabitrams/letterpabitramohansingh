@@ -1,3 +1,4 @@
+/* src/letter/editor/ButtonPicker.tsx */
 import { useState, useEffect } from 'react'
 import { Accordion, Button, Input } from '../../core/components/ui'
 import { COLORS, type ColorKey } from '../tokens/colors'
@@ -71,6 +72,11 @@ export function ButtonPicker({
     currentOnChange({ ...currentConfig, [key]: value })
   }
 
+  const toggleAnimation = (animationId: string) => {
+    const newValue = currentConfig.animation === animationId ? '' : animationId
+    currentOnChange({ ...currentConfig, animation: newValue })
+  }
+
   const accordionSubtitle = isTwoChoice
     ? `${yes?.text ?? ''} / ${no?.text ?? ''}`
     : isOneChoice
@@ -90,6 +96,10 @@ export function ButtonPicker({
   }
 
   const isTriggerAnimationTab = isTwoChoice && activeTab === 'no'
+  const animationList = isTriggerAnimationTab
+    ? BUTTON_TRIGGER_ANIMATIONS
+    : BUTTON_MOTION_ANIMATIONS
+  const visibleAnimations = animationList.filter((entry) => entry.id !== 'none')
 
   return (
     <Accordion title="Buttons" subtitle={accordionSubtitle}>
@@ -187,13 +197,10 @@ export function ButtonPicker({
             {isTriggerAnimationTab ? 'Animation (Trigger)' : 'Animation (Motion)'}
           </label>
           <div className="flex flex-wrap gap-2">
-            {(isTriggerAnimationTab
-              ? BUTTON_TRIGGER_ANIMATIONS
-              : BUTTON_MOTION_ANIMATIONS
-            ).map((animationEntry) => (
+            {visibleAnimations.map((animationEntry) => (
               <Button
                 key={animationEntry.id}
-                onClick={() => updateConfig('animation', animationEntry.id)}
+                onClick={() => toggleAnimation(animationEntry.id)}
                 variant={
                   currentConfig.animation === animationEntry.id ? 'active' : 'outline'
                 }

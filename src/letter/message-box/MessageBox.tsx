@@ -18,15 +18,15 @@ type MessageBoxProps = {
 export default function MessageBox({
   content,
   variant = 'romantic',
-  animation = 'fade',
+  animation = '',
   textVariant = 'romantic',
-  textAnimation = 'none',
+  textAnimation = '',
   editable = false,
   onChange,
   placeholder = 'Write your message...',
 }: MessageBoxProps) {
   const variantConfig = getMessageBoxVariant(variant)
-  const animationConfig = getMessageBoxAnimation(animation)
+  const animationConfig = animation ? getMessageBoxAnimation(animation) : undefined
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {

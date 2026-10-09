@@ -21,8 +21,10 @@ export function Editor({ pattern, message, config, update }: EditorProps) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
       <div className="flex flex-col gap-4">
         <BackgroundPicker
-          value={config.background}
-          onChange={(newValue) => update('background', newValue)}
+          variant={config.background}
+          animation={config.backgroundAnimation}
+          onVariantChange={(newVariant) => update('background', newVariant)}
+          onAnimationChange={(newAnimation) => update('backgroundAnimation', newAnimation)}
         />
         <EffectPicker
           value={config.effect}

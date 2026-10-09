@@ -11,6 +11,7 @@ export type TwoChoiceConfig = {
   header?: { enabled: boolean; text: string; variant: string; animation: string }
   message: string
   background: string
+  backgroundAnimation: string
   effect: string
   textVariant: string
   textAnimation: string
@@ -66,7 +67,7 @@ export default function TwoChoice({
   }
 
   return (
-    <Background variant={config.background}>
+    <Background variant={config.background} animation={config.backgroundAnimation}>
       <Effect variant={config.effect} />
       <div className="relative z-10 max-w-md w-full space-y-4">
         {senderName && (

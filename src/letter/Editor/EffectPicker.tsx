@@ -1,3 +1,4 @@
+/* src/letter/editor/EffectPicker.tsx */
 import { Accordion, Button } from '../../core/components/ui'
 import { EFFECT_VARIANTS } from '../effect'
 
@@ -7,18 +8,23 @@ type EffectPickerProps = {
 }
 
 export function EffectPicker({ value, onChange }: EffectPickerProps) {
-  const currentVariant = EFFECT_VARIANTS.find((variantEntry) => variantEntry.id === value)
+  const visibleEffects = EFFECT_VARIANTS.filter((effectEntry) => effectEntry.id !== 'none')
+  const currentVariant = visibleEffects.find((effectEntry) => effectEntry.id === value)
+
+  const handleClick = (id: string) => {
+    onChange(value === id ? '' : id)
+  }
 
   return (
-    <Accordion title="Effect" subtitle={currentVariant?.config?.name ?? value}>
+    <Accordion title="Effect" subtitle={currentVariant?.config?.name ?? 'None'}>
       <div className="flex flex-wrap gap-2">
-        {EFFECT_VARIANTS.map((variantEntry) => (
+        {visibleEffects.map((effectEntry) => (
           <Button
-            key={variantEntry.id}
-            onClick={() => onChange(variantEntry.id)}
-            variant={value === variantEntry.id ? 'active' : 'outline'}
+            key={effectEntry.id}
+            onClick={() => handleClick(effectEntry.id)}
+            variant={value === effectEntry.id ? 'active' : 'outline'}
           >
-            {variantEntry.config?.name ?? variantEntry.id}
+            {effectEntry.config?.name ?? effectEntry.id}
           </Button>
         ))}
       </div>

@@ -1,3 +1,4 @@
+/* src/letter/editor/TextPicker.tsx */
 import { Accordion, Button } from '../../core/components/ui'
 import { TEXT_VARIANTS, TEXT_ANIMATIONS } from '../text'
 
@@ -15,13 +16,21 @@ export function TextPicker({
   onAnimationChange,
 }: TextPickerProps) {
   const variantName =
-    TEXT_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ?? variant
-  const animationName =
-    TEXT_ANIMATIONS.find((animationEntry) => animationEntry.id === animation)?.config?.name ??
-    animation
+    TEXT_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ?? ''
+
+  const visibleAnimations = TEXT_ANIMATIONS.filter((entry) => entry.id !== 'none')
+  const currentAnimation = visibleAnimations.find((entry) => entry.id === animation)
+
+  const subtitle = currentAnimation
+    ? `${variantName} · ${currentAnimation.config?.name ?? ''}`
+    : variantName
+
+  const handleAnimationClick = (id: string) => {
+    onAnimationChange(animation === id ? '' : id)
+  }
 
   return (
-    <Accordion title="Text" subtitle={`${variantName} · ${animationName}`}>
+    <Accordion title="Text" subtitle={subtitle}>
       <div className="space-y-4">
         <div>
           <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
@@ -45,10 +54,10 @@ export function TextPicker({
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">
-            {TEXT_ANIMATIONS.map((animationEntry) => (
+            {visibleAnimations.map((animationEntry) => (
               <Button
                 key={animationEntry.id}
-                onClick={() => onAnimationChange(animationEntry.id)}
+                onClick={() => handleAnimationClick(animationEntry.id)}
                 variant={animation === animationEntry.id ? 'active' : 'outline'}
               >
                 {animationEntry.config?.name ?? animationEntry.id}

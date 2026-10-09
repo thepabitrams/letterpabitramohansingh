@@ -50,11 +50,11 @@ function Typewriter({ content }: { content: string }) {
 export default function Text({
   content,
   variant = 'romantic',
-  animation = 'none',
+  animation = '',
   as = 'body',
 }: TextProps) {
   const variantConfig = getTextVariant(variant)
-  const animationConfig = getTextAnimation(animation)
+  const animationConfig = animation ? getTextAnimation(animation) : undefined
 
   const appliedClassName =
     as === 'heading'

@@ -5,7 +5,9 @@ type EffectProps = {
   variant?: string
 }
 
-export default function Effect({ variant = 'none' }: EffectProps) {
+export default function Effect({ variant = '' }: EffectProps) {
+  if (!variant) return null
+
   const effectConfig = getEffectVariant(variant)
   if (!effectConfig?.component) return null
 

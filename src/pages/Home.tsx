@@ -11,11 +11,12 @@ import { createLetter, getMe } from '../core/lib/api'
 
 const DEFAULT_LETTER_CONFIG = {
   background: 'blue',
-  effect: 'hearts',
+  backgroundAnimation: '',
+  effect: '',
   textVariant: 'romantic',
-  textAnimation: 'none',
-  messageBox: { variant: 'romantic', animation: 'fade' },
-  header: { enabled: false, text: '', variant: 'romantic', animation: 'fade' },
+  textAnimation: '',
+  messageBox: { variant: 'romantic', animation: '' },
+  header: { enabled: false, text: '', variant: 'romantic', animation: '' },
   buttons: {
     yes: {
       text: 'Yes',
@@ -23,7 +24,7 @@ const DEFAULT_LETTER_CONFIG = {
       shape: 'pill',
       size: 'md',
       variant: 'solid',
-      animation: 'pulse',
+      animation: '',
     },
     no: {
       text: 'No',
@@ -31,7 +32,7 @@ const DEFAULT_LETTER_CONFIG = {
       shape: 'pill',
       size: 'md',
       variant: 'solid',
-      animation: 'runaway',
+      animation: '',
     },
   },
   button: {
@@ -40,7 +41,7 @@ const DEFAULT_LETTER_CONFIG = {
     shape: 'pill',
     size: 'md',
     variant: 'solid',
-    animation: 'pulse',
+    animation: '',
   },
   submitButton: {
     text: 'Submit',
@@ -48,7 +49,7 @@ const DEFAULT_LETTER_CONFIG = {
     shape: 'rounded',
     size: 'md',
     variant: 'solid',
-    animation: 'none',
+    animation: '',
   },
 }
 

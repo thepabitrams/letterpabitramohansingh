@@ -76,6 +76,7 @@ export function LetterView() {
       note: replyState?.note ?? '',
       pattern: letter.pattern,
       background: letter.config.background,
+      backgroundAnimation: letter.config.backgroundAnimation,
       effect: letter.config.effect,
       textVariant: letter.config.textVariant,
       textAnimation: letter.config.textAnimation,

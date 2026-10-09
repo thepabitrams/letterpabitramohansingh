@@ -1,5 +1,5 @@
 const variantModules = import.meta.glob('./variants/*.ts', { eager: true })
-const animModules = import.meta.glob('./animations/*.ts', { eager: true })
+const animModules = import.meta.glob('./animations/*.{ts,tsx}', { eager: true })
 
 export const BACKGROUND_VARIANTS = Object.entries(variantModules).map(([path, mod]) => ({
   id: path.replace('./variants/', '').replace('.ts', ''),
@@ -7,7 +7,7 @@ export const BACKGROUND_VARIANTS = Object.entries(variantModules).map(([path, mo
 }))
 
 export const BACKGROUND_ANIMATIONS = Object.entries(animModules).map(([path, mod]) => ({
-  id: path.replace('./animations/', '').replace('.ts', ''),
+  id: path.replace('./animations/', '').replace(/\.tsx?$/, ''),
   config: (mod as any).default,
 }))
 

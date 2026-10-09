@@ -1,3 +1,4 @@
+/* src/letter/editor/MessageBoxPicker.tsx */
 import { Accordion, Button } from '../../core/components/ui'
 import { MESSAGE_BOX_VARIANTS, MESSAGE_BOX_ANIMATIONS } from '../message-box'
 
@@ -15,14 +16,21 @@ export function MessageBoxPicker({
   onAnimationChange,
 }: MessageBoxPickerProps) {
   const variantName =
-    MESSAGE_BOX_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ??
-    variant
-  const animationName =
-    MESSAGE_BOX_ANIMATIONS.find((animationEntry) => animationEntry.id === animation)?.config
-      ?.name ?? animation
+    MESSAGE_BOX_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ?? ''
+
+  const visibleAnimations = MESSAGE_BOX_ANIMATIONS.filter((entry) => entry.id !== 'none')
+  const currentAnimation = visibleAnimations.find((entry) => entry.id === animation)
+
+  const subtitle = currentAnimation
+    ? `${variantName} · ${currentAnimation.config?.name ?? ''}`
+    : variantName
+
+  const handleAnimationClick = (id: string) => {
+    onAnimationChange(animation === id ? '' : id)
+  }
 
   return (
-    <Accordion title="Message Box" subtitle={`${variantName} · ${animationName}`}>
+    <Accordion title="Message Box" subtitle={subtitle}>
       <div className="space-y-4">
         <div>
           <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
@@ -45,10 +53,10 @@ export function MessageBoxPicker({
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">
-            {MESSAGE_BOX_ANIMATIONS.map((animationEntry) => (
+            {visibleAnimations.map((animationEntry) => (
               <Button
                 key={animationEntry.id}
-                onClick={() => onAnimationChange(animationEntry.id)}
+                onClick={() => handleAnimationClick(animationEntry.id)}
                 variant={animation === animationEntry.id ? 'active' : 'outline'}
               >
                 {animationEntry.config?.name ?? animationEntry.id}

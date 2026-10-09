@@ -31,10 +31,10 @@ export default function Button({
   shape = 'pill',
   size = 'md',
   variant = 'solid',
-  animation = 'none',
+  animation = '',
   onClick,
 }: ButtonProps) {
-  const animationConfig = getButtonAnimation(animation)
+  const animationConfig = animation ? getButtonAnimation(animation) : undefined
   const variantConfig = getButtonVariant(variant)
   const isTriggerAnimation = animationConfig?.category === 'trigger'
 
