@@ -7,40 +7,41 @@ type LetterCanvasData = {
   note: string
 }
 
-const WIDTH = 800
-const PADDING = 60
-const CARD_RADIUS = 24
+const CANVAS_WIDTH = 800
+const CANVAS_PADDING = 60
+const CARD_CORNER_RADIUS = 24
+const RETINA_SCALE = 2
 
 function wrapText(
-  ctx: CanvasRenderingContext2D,
+  context: CanvasRenderingContext2D,
   text: string,
-  x: number,
-  y: number,
+  startX: number,
+  startY: number,
   maxWidth: number,
   lineHeight: number
 ): number {
   const paragraphs = text.split('\n')
-  let currentY = y
+  let currentY = startY
 
   for (const paragraph of paragraphs) {
     const words = paragraph.split(' ')
-    let line = ''
+    let currentLine = ''
 
     for (const word of words) {
-      const test = line ? line + ' ' + word : word
-      const width = ctx.measureText(test).width
+      const testLine = currentLine ? currentLine + ' ' + word : word
+      const measuredWidth = context.measureText(testLine).width
 
-      if (width > maxWidth && line) {
-        ctx.fillText(line, x, currentY)
-        line = word
+      if (measuredWidth > maxWidth && currentLine) {
+        context.fillText(currentLine, startX, currentY)
+        currentLine = word
         currentY += lineHeight
       } else {
-        line = test
+        currentLine = testLine
       }
     }
 
-    if (line) {
-      ctx.fillText(line, x, currentY)
+    if (currentLine) {
+      context.fillText(currentLine, startX, currentY)
       currentY += lineHeight
     }
   }
@@ -48,138 +49,122 @@ function wrapText(
   return currentY
 }
 
-export function renderLetterToCanvas(data: LetterCanvasData): string {
-  // First pass: measure height with an offscreen canvas
+export function renderLetterToCanvas(letterData: LetterCanvasData): string {
   const measureCanvas = document.createElement('canvas')
-  const measureCtx = measureCanvas.getContext('2d')!
-  measureCtx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  const measureContext = measureCanvas.getContext('2d')!
+  measureContext.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
 
-  const contentWidth = WIDTH - PADDING * 2
-  const innerWidth = contentWidth - 60
+  const contentWidth = CANVAS_WIDTH - CANVAS_PADDING * 2
+  const innerContentWidth = contentWidth - 60
 
-  // Measure message
-  const msgLines = Math.ceil(
-    measureCtx.measureText(data.message).width / innerWidth
+  const messageLines = Math.ceil(
+    measureContext.measureText(letterData.message).width / innerContentWidth
   )
-  const msgHeight = Math.max(msgLines, 3) * 26
+  const messageHeight = Math.max(messageLines, 3) * 26
 
-  // Measure note
-  const noteLines = data.note
-    ? Math.ceil(measureCtx.measureText(data.note).width / innerWidth)
+  const noteLines = letterData.note
+    ? Math.ceil(measureContext.measureText(letterData.note).width / innerContentWidth)
     : 0
   const noteHeight = noteLines * 24
 
-  const card1Height = 180
-  const card2Height = 100 + msgHeight + 120 + noteHeight
-  const totalHeight = PADDING + card1Height + 24 + card2Height + PADDING
+  const firstCardHeight = 180
+  const secondCardHeight = 100 + messageHeight + 120 + noteHeight
+  const totalHeight = CANVAS_PADDING + firstCardHeight + 24 + secondCardHeight + CANVAS_PADDING
 
-  // Real canvas
   const canvas = document.createElement('canvas')
-  const scale = 2 // retina
-  canvas.width = WIDTH * scale
-  canvas.height = totalHeight * scale
-  const ctx = canvas.getContext('2d')!
-  ctx.scale(scale, scale)
+  canvas.width = CANVAS_WIDTH * RETINA_SCALE
+  canvas.height = totalHeight * RETINA_SCALE
 
-  // Background gradient
-  const grad = ctx.createLinearGradient(0, 0, WIDTH, totalHeight)
-  grad.addColorStop(0, '#fce7f3')
-  grad.addColorStop(1, '#e9d5ff')
-  ctx.fillStyle = grad
-  ctx.fillRect(0, 0, WIDTH, totalHeight)
+  const context = canvas.getContext('2d')!
+  context.scale(RETINA_SCALE, RETINA_SCALE)
 
-  let cursorY = PADDING
+  const backgroundGradient = context.createLinearGradient(0, 0, CANVAS_WIDTH, totalHeight)
+  backgroundGradient.addColorStop(0, '#fce7f3')
+  backgroundGradient.addColorStop(1, '#e9d5ff')
+  context.fillStyle = backgroundGradient
+  context.fillRect(0, 0, CANVAS_WIDTH, totalHeight)
 
-  // Card 1 — Thank you
-  ctx.save()
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.08)'
-  ctx.shadowBlur = 20
-  ctx.shadowOffsetY = 4
-  ctx.fillStyle = '#ffffff'
-  ctx.beginPath()
-  ctx.roundRect(PADDING, cursorY, contentWidth, card1Height, CARD_RADIUS)
-  ctx.fill()
-  ctx.restore()
+  let cursorY = CANVAS_PADDING
 
-  // Heart emoji
-  ctx.font = '44px sans-serif'
-  ctx.textAlign = 'center'
-  ctx.fillText('💕', WIDTH / 2, cursorY + 70)
+  context.save()
+  context.shadowColor = 'rgba(0, 0, 0, 0.08)'
+  context.shadowBlur = 20
+  context.shadowOffsetY = 4
+  context.fillStyle = '#ffffff'
+  context.beginPath()
+  context.roundRect(CANVAS_PADDING, cursorY, contentWidth, firstCardHeight, CARD_CORNER_RADIUS)
+  context.fill()
+  context.restore()
 
-  // "Thank you!"
-  ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#ec4899'
-  ctx.fillText('Thank you!', WIDTH / 2, cursorY + 118)
+  context.font = '44px sans-serif'
+  context.textAlign = 'center'
+  context.fillText('💕', CANVAS_WIDTH / 2, cursorY + 70)
 
-  // Subtitle
-  ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#6b7280'
-  ctx.fillText('Your response has been recorded.', WIDTH / 2, cursorY + 148)
+  context.font = 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#ec4899'
+  context.fillText('Thank you!', CANVAS_WIDTH / 2, cursorY + 118)
 
-  cursorY += card1Height + 24
+  context.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#6b7280'
+  context.fillText('Your response has been recorded.', CANVAS_WIDTH / 2, cursorY + 148)
 
-  // Card 2 — Letter
-  ctx.save()
-  ctx.shadowColor = 'rgba(0, 0, 0, 0.08)'
-  ctx.shadowBlur = 24
-  ctx.shadowOffsetY = 6
-  ctx.fillStyle = '#ffffff'
-  ctx.beginPath()
-  ctx.roundRect(PADDING, cursorY, contentWidth, card2Height, CARD_RADIUS)
-  ctx.fill()
-  ctx.restore()
+  cursorY += firstCardHeight + 24
 
-  const innerX = PADDING + 30
+  context.save()
+  context.shadowColor = 'rgba(0, 0, 0, 0.08)'
+  context.shadowBlur = 24
+  context.shadowOffsetY = 6
+  context.fillStyle = '#ffffff'
+  context.beginPath()
+  context.roundRect(CANVAS_PADDING, cursorY, contentWidth, secondCardHeight, CARD_CORNER_RADIUS)
+  context.fill()
+  context.restore()
+
+  const innerX = CANVAS_PADDING + 30
   let innerY = cursorY + 40
 
-  // "Original letter" label
-  ctx.textAlign = 'left'
-  ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#9ca3af'
-  ctx.fillText('ORIGINAL LETTER', innerX, innerY)
+  context.textAlign = 'left'
+  context.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#9ca3af'
+  context.fillText('ORIGINAL LETTER', innerX, innerY)
   innerY += 28
 
-  // Message text
-  ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#374151'
-  innerY = wrapText(ctx, data.message, innerX, innerY, innerWidth, 26)
+  context.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#374151'
+  innerY = wrapText(context, letterData.message, innerX, innerY, innerContentWidth, 26)
 
   innerY += 30
 
-  // Divider
-  ctx.strokeStyle = '#f3f4f6'
-  ctx.lineWidth = 1
-  ctx.beginPath()
-  ctx.moveTo(innerX, innerY)
-  ctx.lineTo(WIDTH - PADDING - 30, innerY)
-  ctx.stroke()
+  context.strokeStyle = '#f3f4f6'
+  context.lineWidth = 1
+  context.beginPath()
+  context.moveTo(innerX, innerY)
+  context.lineTo(CANVAS_WIDTH - CANVAS_PADDING - 30, innerY)
+  context.stroke()
   innerY += 30
 
-  // "Your reply" label
-  ctx.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#9ca3af'
-  ctx.fillText('YOUR REPLY', innerX, innerY)
+  context.font = '11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#9ca3af'
+  context.fillText('YOUR REPLY', innerX, innerY)
   innerY += 32
 
-  // Reply value
-  ctx.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-  ctx.fillStyle = '#ec4899'
-  ctx.fillText(data.reply, innerX, innerY)
+  context.font = 'bold 22px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+  context.fillStyle = '#ec4899'
+  context.fillText(letterData.reply, innerX, innerY)
   innerY += 36
 
-  // Note (if any)
-  if (data.note) {
-    ctx.font = 'italic 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
-    ctx.fillStyle = '#6b7280'
-    wrapText(ctx, `"${data.note}"`, innerX, innerY, innerWidth, 24)
+  if (letterData.note) {
+    context.font = 'italic 15px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
+    context.fillStyle = '#6b7280'
+    wrapText(context, `"${letterData.note}"`, innerX, innerY, innerContentWidth, 24)
   }
 
   return canvas.toDataURL('image/png')
 }
 
-export function downloadDataUrl(dataUrl: string, filename: string) {
-  const link = document.createElement('a')
-  link.href = dataUrl
-  link.download = filename
-  link.click()
+export function downloadDataUrl(dataUrl: string, fileName: string) {
+  const downloadLink = document.createElement('a')
+  downloadLink.href = dataUrl
+  downloadLink.download = fileName
+  downloadLink.click()
 }

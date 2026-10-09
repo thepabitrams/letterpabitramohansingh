@@ -15,7 +15,9 @@ type ButtonConfig = {
   animation: string
 }
 
-type Props = {
+type ButtonTab = 'yes' | 'no' | 'submit'
+
+type ButtonPickerProps = {
   pattern: PatternId
   yes?: ButtonConfig
   no?: ButtonConfig
@@ -37,75 +39,73 @@ export function ButtonPicker({
   onNoChange,
   onSingleChange,
   onSubmitChange,
-}: Props) {
+}: ButtonPickerProps) {
   const isTwoChoice = pattern === 'two-choice'
   const isOneChoice = pattern === 'one-choice'
-  const isNoteOnly = pattern === 'note-only'
 
-  const [tab, setTab] = useState<'yes' | 'no' | 'submit'>(
-    isTwoChoice ? 'yes' : isOneChoice ? 'yes' : 'submit'
-  )
+  const defaultTab: ButtonTab = isTwoChoice ? 'yes' : isOneChoice ? 'yes' : 'submit'
+  const [activeTab, setActiveTab] = useState<ButtonTab>(defaultTab)
 
-  // Reset tab when pattern changes
   useEffect(() => {
-    setTab(isTwoChoice ? 'yes' : isOneChoice ? 'yes' : 'submit')
+    setActiveTab(isTwoChoice ? 'yes' : isOneChoice ? 'yes' : 'submit')
   }, [pattern, isTwoChoice, isOneChoice])
 
-  const getCurrent = (): ButtonConfig => {
-    if (tab === 'yes' && isTwoChoice) return yes!
-    if (tab === 'no' && isTwoChoice) return no!
-    if (tab === 'yes' && isOneChoice) return single!
+  const getCurrentConfig = (): ButtonConfig => {
+    if (activeTab === 'yes' && isTwoChoice) return yes!
+    if (activeTab === 'no' && isTwoChoice) return no!
+    if (activeTab === 'yes' && isOneChoice) return single!
     return submit
   }
 
-  const getOnChange = () => {
-    if (tab === 'yes' && isTwoChoice) return onYesChange!
-    if (tab === 'no' && isTwoChoice) return onNoChange!
-    if (tab === 'yes' && isOneChoice) return onSingleChange!
+  const getCurrentOnChange = () => {
+    if (activeTab === 'yes' && isTwoChoice) return onYesChange!
+    if (activeTab === 'no' && isTwoChoice) return onNoChange!
+    if (activeTab === 'yes' && isOneChoice) return onSingleChange!
     return onSubmitChange
   }
 
-  const current = getCurrent()
-  const onChange = getOnChange()
+  const currentConfig = getCurrentConfig()
+  const currentOnChange = getCurrentOnChange()
 
-  const update = (key: keyof ButtonConfig, value: string) => {
-    onChange({ ...current, [key]: value })
+  const updateConfig = (key: keyof ButtonConfig, value: string) => {
+    currentOnChange({ ...currentConfig, [key]: value })
   }
 
-  const subtitle = isTwoChoice
+  const accordionSubtitle = isTwoChoice
     ? `${yes?.text ?? ''} / ${no?.text ?? ''}`
     : isOneChoice
     ? single?.text ?? ''
     : submit?.text ?? ''
 
-  // Tabs
-  const tabs: { id: 'yes' | 'no' | 'submit'; label: string }[] = []
+  const availableTabs: { id: ButtonTab; label: string }[] = []
   if (isTwoChoice) {
-    tabs.push({ id: 'yes', label: 'Button 1' })
-    tabs.push({ id: 'no', label: 'Button 2' })
-    tabs.push({ id: 'submit', label: 'Submit' })
+    availableTabs.push({ id: 'yes', label: 'Button 1' })
+    availableTabs.push({ id: 'no', label: 'Button 2' })
+    availableTabs.push({ id: 'submit', label: 'Submit' })
   } else if (isOneChoice) {
-    tabs.push({ id: 'yes', label: 'Button' })
-    tabs.push({ id: 'submit', label: 'Submit' })
+    availableTabs.push({ id: 'yes', label: 'Button' })
+    availableTabs.push({ id: 'submit', label: 'Submit' })
   } else {
-    tabs.push({ id: 'submit', label: 'Submit' })
+    availableTabs.push({ id: 'submit', label: 'Submit' })
   }
 
-  const isTriggerButton = isTwoChoice && tab === 'no'
+  const isTriggerAnimationTab = isTwoChoice && activeTab === 'no'
 
   return (
-    <Accordion title="Buttons" subtitle={subtitle}>
-      {tabs.length > 1 && (
+    <Accordion title="Buttons" subtitle={accordionSubtitle}>
+      {availableTabs.length > 1 && (
         <div className="flex gap-2 mb-5 bg-gray-100 p-1 rounded-xl">
-          {tabs.map((t) => (
+          {availableTabs.map((tabEntry) => (
             <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
+              key={tabEntry.id}
+              onClick={() => setActiveTab(tabEntry.id)}
               className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition ${
-                tab === t.id ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500'
+                activeTab === tabEntry.id
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-500'
               }`}
             >
-              {t.label}
+              {tabEntry.label}
             </button>
           ))}
         </div>
@@ -114,22 +114,24 @@ export function ButtonPicker({
       <div className="space-y-4">
         <Input
           label="Text"
-          value={current.text}
-          onChange={(v) => update('text', v)}
-          placeholder={tab === 'submit' ? 'Submit' : 'Yes'}
+          value={currentConfig.text}
+          onChange={(newValue) => updateConfig('text', newValue)}
+          placeholder={activeTab === 'submit' ? 'Submit' : 'Yes'}
         />
 
         <div>
           <label className="text-xs font-medium text-gray-500 block mb-2">Color</label>
           <div className="flex flex-wrap gap-2">
-            {(Object.keys(COLORS) as ColorKey[]).map((c) => (
+            {(Object.keys(COLORS) as ColorKey[]).map((colorKey) => (
               <button
-                key={c}
-                onClick={() => update('color', c)}
+                key={colorKey}
+                onClick={() => updateConfig('color', colorKey)}
                 className={`w-8 h-8 rounded-full border-2 transition ${
-                  current.color === c ? 'border-gray-900 scale-110' : 'border-gray-200 hover:scale-105'
+                  currentConfig.color === colorKey
+                    ? 'border-gray-900 scale-110'
+                    : 'border-gray-200 hover:scale-105'
                 }`}
-                style={{ backgroundColor: COLORS[c].hex }}
+                style={{ backgroundColor: COLORS[colorKey].hex }}
               />
             ))}
           </div>
@@ -138,13 +140,13 @@ export function ButtonPicker({
         <div>
           <label className="text-xs font-medium text-gray-500 block mb-2">Shape</label>
           <div className="flex flex-wrap gap-2">
-            {(Object.keys(SHAPES) as ShapeKey[]).map((s) => (
+            {(Object.keys(SHAPES) as ShapeKey[]).map((shapeKey) => (
               <Button
-                key={s}
-                onClick={() => update('shape', s)}
-                variant={current.shape === s ? 'active' : 'outline'}
+                key={shapeKey}
+                onClick={() => updateConfig('shape', shapeKey)}
+                variant={currentConfig.shape === shapeKey ? 'active' : 'outline'}
               >
-                {s}
+                {shapeKey}
               </Button>
             ))}
           </div>
@@ -153,13 +155,13 @@ export function ButtonPicker({
         <div>
           <label className="text-xs font-medium text-gray-500 block mb-2">Size</label>
           <div className="flex flex-wrap gap-2">
-            {(Object.keys(SIZES) as SizeKey[]).map((s) => (
+            {(Object.keys(SIZES) as SizeKey[]).map((sizeKey) => (
               <Button
-                key={s}
-                onClick={() => update('size', s)}
-                variant={current.size === s ? 'active' : 'outline'}
+                key={sizeKey}
+                onClick={() => updateConfig('size', sizeKey)}
+                variant={currentConfig.size === sizeKey ? 'active' : 'outline'}
               >
-                {s}
+                {sizeKey}
               </Button>
             ))}
           </div>
@@ -168,13 +170,13 @@ export function ButtonPicker({
         <div>
           <label className="text-xs font-medium text-gray-500 block mb-2">Variant</label>
           <div className="flex flex-wrap gap-2">
-            {BUTTON_VARIANTS.map((v) => (
+            {BUTTON_VARIANTS.map((variantEntry) => (
               <Button
-                key={v.id}
-                onClick={() => update('variant', v.id)}
-                variant={current.variant === v.id ? 'active' : 'outline'}
+                key={variantEntry.id}
+                onClick={() => updateConfig('variant', variantEntry.id)}
+                variant={currentConfig.variant === variantEntry.id ? 'active' : 'outline'}
               >
-                {v.config?.name ?? v.id}
+                {variantEntry.config?.name ?? variantEntry.id}
               </Button>
             ))}
           </div>
@@ -182,16 +184,21 @@ export function ButtonPicker({
 
         <div>
           <label className="text-xs font-medium text-gray-500 block mb-2">
-            {isTriggerButton ? 'Animation (Trigger)' : 'Animation (Motion)'}
+            {isTriggerAnimationTab ? 'Animation (Trigger)' : 'Animation (Motion)'}
           </label>
           <div className="flex flex-wrap gap-2">
-            {(isTriggerButton ? BUTTON_TRIGGER_ANIMATIONS : BUTTON_MOTION_ANIMATIONS).map((a) => (
+            {(isTriggerAnimationTab
+              ? BUTTON_TRIGGER_ANIMATIONS
+              : BUTTON_MOTION_ANIMATIONS
+            ).map((animationEntry) => (
               <Button
-                key={a.id}
-                onClick={() => update('animation', a.id)}
-                variant={current.animation === a.id ? 'active' : 'outline'}
+                key={animationEntry.id}
+                onClick={() => updateConfig('animation', animationEntry.id)}
+                variant={
+                  currentConfig.animation === animationEntry.id ? 'active' : 'outline'
+                }
               >
-                {a.config?.name ?? a.id}
+                {animationEntry.config?.name ?? animationEntry.id}
               </Button>
             ))}
           </div>

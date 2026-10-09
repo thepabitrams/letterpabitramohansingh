@@ -1,13 +1,13 @@
 /* src/core/components/ui/Card.tsx */
 import { motion } from 'motion/react'
 
-type Props = {
+type CardProps = {
   children: React.ReactNode
   className?: string
   title?: string
 }
 
-export function Card({ children, className = '', title }: Props) {
+export function Card({ children, className = '', title }: CardProps) {
   return (
     <motion.section
       initial={{ opacity: 0, y: -10 }}

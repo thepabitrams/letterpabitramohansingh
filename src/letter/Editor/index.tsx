@@ -7,7 +7,7 @@ import { MessageBoxPicker } from './MessageBoxPicker'
 import { ButtonPicker } from './ButtonPicker'
 import { Preview } from './Preview'
 
-type Props = {
+type EditorProps = {
   pattern: PatternId
   message: string
   senderName: string
@@ -16,23 +16,33 @@ type Props = {
   update: (key: string, value: any) => void
 }
 
-export function Editor({ pattern, message, config, update }: Props) {
+export function Editor({ pattern, message, config, update }: EditorProps) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
       <div className="flex flex-col gap-4">
-        <BackgroundPicker value={config.background} onChange={(v) => update('background', v)} />
-        <EffectPicker value={config.effect} onChange={(v) => update('effect', v)} />
+        <BackgroundPicker
+          value={config.background}
+          onChange={(newValue) => update('background', newValue)}
+        />
+        <EffectPicker
+          value={config.effect}
+          onChange={(newValue) => update('effect', newValue)}
+        />
         <TextPicker
           variant={config.textVariant}
           animation={config.textAnimation}
-          onVariantChange={(v) => update('textVariant', v)}
-          onAnimationChange={(v) => update('textAnimation', v)}
+          onVariantChange={(newVariant) => update('textVariant', newVariant)}
+          onAnimationChange={(newAnimation) => update('textAnimation', newAnimation)}
         />
         <MessageBoxPicker
           variant={config.messageBox.variant}
           animation={config.messageBox.animation}
-          onVariantChange={(v) => update('messageBox', { ...config.messageBox, variant: v })}
-          onAnimationChange={(v) => update('messageBox', { ...config.messageBox, animation: v })}
+          onVariantChange={(newVariant) =>
+            update('messageBox', { ...config.messageBox, variant: newVariant })
+          }
+          onAnimationChange={(newAnimation) =>
+            update('messageBox', { ...config.messageBox, animation: newAnimation })
+          }
         />
 
         {pattern === 'two-choice' && (
@@ -41,9 +51,11 @@ export function Editor({ pattern, message, config, update }: Props) {
             yes={config.buttons.yes}
             no={config.buttons.no}
             submit={config.submitButton}
-            onYesChange={(c) => update('buttons', { ...config.buttons, yes: c })}
-            onNoChange={(c) => update('buttons', { ...config.buttons, no: c })}
-            onSubmitChange={(c) => update('submitButton', c)}
+            onYesChange={(newConfig) =>
+              update('buttons', { ...config.buttons, yes: newConfig })
+            }
+            onNoChange={(newConfig) => update('buttons', { ...config.buttons, no: newConfig })}
+            onSubmitChange={(newConfig) => update('submitButton', newConfig)}
           />
         )}
 
@@ -52,8 +64,8 @@ export function Editor({ pattern, message, config, update }: Props) {
             pattern="one-choice"
             single={config.button}
             submit={config.submitButton}
-            onSingleChange={(c) => update('button', c)}
-            onSubmitChange={(c) => update('submitButton', c)}
+            onSingleChange={(newConfig) => update('button', newConfig)}
+            onSubmitChange={(newConfig) => update('submitButton', newConfig)}
           />
         )}
 
@@ -61,7 +73,7 @@ export function Editor({ pattern, message, config, update }: Props) {
           <ButtonPicker
             pattern="note-only"
             submit={config.submitButton}
-            onSubmitChange={(c) => update('submitButton', c)}
+            onSubmitChange={(newConfig) => update('submitButton', newConfig)}
           />
         )}
       </div>

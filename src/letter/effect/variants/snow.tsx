@@ -6,9 +6,9 @@ export default {
   name: 'Snow',
   component: () => (
     <>
-      {Array.from({ length: 25 }).map((_, i) => (
+      {Array.from({ length: 25 }).map((_, particleIndex) => (
         <motion.div
-          key={i}
+          key={particleIndex}
           initial={{ top: '-5%', opacity: 0, rotate: 0 }}
           animate={{ top: '105%', opacity: [0, 1, 1, 0], rotate: 360 }}
           transition={{

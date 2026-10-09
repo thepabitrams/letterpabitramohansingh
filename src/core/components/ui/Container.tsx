@@ -1,10 +1,10 @@
 /* src/core/components/ui/Container.tsx */
-type Props = {
+type ContainerProps = {
   children: React.ReactNode
   className?: string
 }
 
-export function Container({ children, className = '' }: Props) {
+export function Container({ children, className = '' }: ContainerProps) {
   return (
     <div className={`max-w-5xl mx-auto space-y-6 ${className}`}>
       {children}

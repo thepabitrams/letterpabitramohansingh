@@ -1,11 +1,11 @@
 /* src/core/components/layout/Footer.tsx */
 import { FaCoffee, FaGithub } from 'react-icons/fa'
 
-type Props = {
+type FooterProps = {
   actions?: React.ReactNode
 }
 
-export function Footer({ actions }: Props) {
+export function Footer({ actions }: FooterProps) {
   return (
     <footer className="bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">

@@ -1,23 +1,24 @@
 import { Accordion, Button } from '../../core/components/ui'
 import { EFFECT_VARIANTS } from '../effect'
 
-type Props = {
+type EffectPickerProps = {
   value: string
-  onChange: (v: string) => void
+  onChange: (newValue: string) => void
 }
 
-export function EffectPicker({ value, onChange }: Props) {
-  const current = EFFECT_VARIANTS.find((v) => v.id === value)
+export function EffectPicker({ value, onChange }: EffectPickerProps) {
+  const currentVariant = EFFECT_VARIANTS.find((variantEntry) => variantEntry.id === value)
+
   return (
-    <Accordion title="Effect" subtitle={current?.config?.name ?? value}>
+    <Accordion title="Effect" subtitle={currentVariant?.config?.name ?? value}>
       <div className="flex flex-wrap gap-2">
-        {EFFECT_VARIANTS.map((v) => (
+        {EFFECT_VARIANTS.map((variantEntry) => (
           <Button
-            key={v.id}
-            onClick={() => onChange(v.id)}
-            variant={value === v.id ? 'active' : 'outline'}
+            key={variantEntry.id}
+            onClick={() => onChange(variantEntry.id)}
+            variant={value === variantEntry.id ? 'active' : 'outline'}
           >
-            {v.config?.name ?? v.id}
+            {variantEntry.config?.name ?? variantEntry.id}
           </Button>
         ))}
       </div>

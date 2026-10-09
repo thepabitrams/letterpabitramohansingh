@@ -1,66 +1,80 @@
 /* src/core/lib/api.ts */
 
-export async function createLetter(data: {
+type CreateLetterPayload = {
   senderName: string
   recipientName: string
   message: string
   header?: string
   pattern: string
-  config: any
+  config: unknown
   expiryDays: number
-}) {
-  const res = await fetch('/api/letters', {
+}
+
+export async function createLetter(payload: CreateLetterPayload) {
+  const response = await fetch('/api/letters', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify(data),
+    body: JSON.stringify(payload),
   })
-  if (!res.ok) {
-    const err = await res.json()
-    throw new Error(err.error ?? 'Failed to create letter')
+
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData.error ?? 'Failed to create letter')
   }
-  return res.json()
+
+  return response.json()
 }
 
-export async function getLetter(sender: string, recipient: string) {
-  const res = await fetch(`/api/letters/${sender}/${recipient}`, {
+export async function getLetter(senderSlug: string, recipientSlug: string) {
+  const response = await fetch(`/api/letters/${senderSlug}/${recipientSlug}`, {
     credentials: 'include',
   })
-  if (!res.ok) throw new Error('Letter not found')
-  return res.json()
+
+  if (!response.ok) throw new Error('Letter not found')
+
+  return response.json()
 }
 
-export async function replyLetter(sender: string, recipient: string, reply: string) {
-  const res = await fetch(`/api/letters/${sender}/${recipient}/reply`, {
+export async function replyLetter(senderSlug: string, recipientSlug: string, replyText: string) {
+  const response = await fetch(`/api/letters/${senderSlug}/${recipientSlug}/reply`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ reply }),
+    body: JSON.stringify({ reply: replyText }),
   })
-  if (!res.ok) {
-    const err = await res.json()
-    throw new Error(err.error ?? 'Failed to reply')
+
+  if (!response.ok) {
+    const errorData = await response.json()
+    throw new Error(errorData.error ?? 'Failed to reply')
   }
-  return res.json()
+
+  return response.json()
 }
 
-export async function saveNote(sender: string, recipient: string, note: string) {
-  const res = await fetch(`/api/letters/${sender}/${recipient}/note`, {
+export async function saveNote(senderSlug: string, recipientSlug: string, noteText: string) {
+  const response = await fetch(`/api/letters/${senderSlug}/${recipientSlug}/note`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ note }),
+    body: JSON.stringify({ note: noteText }),
   })
-  if (!res.ok) throw new Error('Failed to save note')
-  return res.json()
+
+  if (!response.ok) throw new Error('Failed to save note')
+
+  return response.json()
 }
 
 export async function getMyLetters() {
-  const res = await fetch('/api/my-letters', { credentials: 'include' })
-  if (!res.ok) throw new Error('Failed to fetch')
-  return res.json()
+  const response = await fetch('/api/my-letters', { credentials: 'include' })
+
+  if (!response.ok) throw new Error('Failed to fetch')
+
+  return response.json()
 }
 
 export async function getMe() {
-  const res = await fetch('/api/me', { credentials: 'include' })
-  if (!res.ok) return null
-  return res.json()
+  const response = await fetch('/api/me', { credentials: 'include' })
+
+  if (!response.ok) return null
+
+  return response.json()
 }

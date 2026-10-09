@@ -8,72 +8,92 @@ import { getLetter, replyLetter, saveNote } from '../core/lib/api'
 import { renderLetterToCanvas, downloadDataUrl } from '../core/lib/canvas'
 import { generateStandaloneHTML } from '../core/lib/standalone-html'
 
+type ReplyState = {
+  reply: string
+  note: string
+}
+
 export function LetterView() {
   const { sender, slug } = useParams()
   const [letter, setLetter] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [existingReply, setExistingReply] = useState<{ reply: string; note: string } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [replyState, setReplyState] = useState<ReplyState | null>(null)
 
   useEffect(() => {
     if (!sender || !slug) return
+
     getLetter(sender, slug)
-      .then((data) => {
-        setLetter(data)
-        if (data.status === 'replied') {
-          setExistingReply({
-            reply: data.reply ?? '',
-            note: data.replyNote ?? '',
+      .then((letterData) => {
+        setLetter(letterData)
+        if (letterData.status === 'replied') {
+          setReplyState({
+            reply: letterData.reply ?? '',
+            note: letterData.replyNote ?? '',
           })
         }
       })
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false))
+      .catch((error) => setErrorMessage(error.message))
+      .finally(() => setIsLoading(false))
   }, [sender, slug])
 
   const handleReply = async (replyText: string) => {
     if (!sender || !slug) return
     await replyLetter(sender, slug, replyText)
-    setExistingReply({ reply: replyText, note: '' })
+    setReplyState({ reply: replyText, note: '' })
   }
 
-  const handleNote = async (note: string) => {
+  const handleNote = async (noteText: string) => {
     if (!sender || !slug) return
-    await saveNote(sender, slug, note)
-    setExistingReply((prev) => (prev ? { ...prev, note } : { reply: '', note }))
+    await saveNote(sender, slug, noteText)
+    setReplyState((previousState) =>
+      previousState
+        ? { ...previousState, note: noteText }
+        : { reply: '', note: noteText }
+    )
   }
 
   const handleSaveImage = () => {
     if (!letter) return
+
     const dataUrl = renderLetterToCanvas({
       recipientName: letter.recipientName,
       message: letter.message,
-      reply: existingReply?.reply ?? '',
-      note: existingReply?.note ?? '',
+      reply: replyState?.reply ?? '',
+      note: replyState?.note ?? '',
     })
+
     downloadDataUrl(dataUrl, `letter-${slug}.png`)
   }
 
   const handleDownloadHTML = () => {
     if (!letter) return
+
     const html = generateStandaloneHTML({
+      senderName: letter.senderName,
       recipientName: letter.recipientName,
       message: letter.message,
-      reply: existingReply?.reply ?? '',
-      note: existingReply?.note ?? '',
+      reply: replyState?.reply ?? '',
+      note: replyState?.note ?? '',
+      pattern: letter.pattern,
       background: letter.config.background,
       effect: letter.config.effect,
-      messageBoxVariant: letter.config.messageBox.variant,
       textVariant: letter.config.textVariant,
       textAnimation: letter.config.textAnimation,
+      messageBoxVariant: letter.config.messageBox.variant,
+      messageBoxAnimation: letter.config.messageBox.animation,
+      buttons: letter.config.buttons,
+      button: letter.config.button,
+      submitButton: letter.config.submitButton,
     })
+
     const blob = new Blob([html], { type: 'text/html' })
-    const url = URL.createObjectURL(blob)
-    downloadDataUrl(url, `letter-${slug}.html`)
-    URL.revokeObjectURL(url)
+    const blobUrl = URL.createObjectURL(blob)
+    downloadDataUrl(blobUrl, `letter-${slug}.html`)
+    URL.revokeObjectURL(blobUrl)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-gray-500">Loading letter...</div>
@@ -81,14 +101,16 @@ export function LetterView() {
     )
   }
 
-  if (error || !letter) {
+  if (errorMessage || !letter) {
     return (
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
             <div className="text-6xl mb-4">💔</div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Letter not found</h2>
-            <p className="text-gray-500">{error || 'This letter may have expired.'}</p>
+            <p className="text-gray-500">
+              {errorMessage || 'This letter may have expired.'}
+            </p>
           </div>
         </div>
         <Footer />
@@ -96,7 +118,7 @@ export function LetterView() {
     )
   }
 
-  const actions = existingReply ? (
+  const footerActions = replyState ? (
     <>
       <button
         onClick={handleSaveImage}
@@ -127,12 +149,12 @@ export function LetterView() {
           }}
           onReply={handleReply}
           onNote={handleNote}
-          existingReply={existingReply}
+          existingReply={replyState}
           senderName={letter.senderName}
           recipientName={letter.recipientName}
         />
       </div>
-      <Footer actions={actions} />
+      <Footer actions={footerActions} />
     </div>
   )
 }

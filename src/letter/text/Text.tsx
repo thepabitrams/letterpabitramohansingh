@@ -3,35 +3,36 @@ import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { getTextVariant, getTextAnimation } from './index'
 
-type Props = {
+type TextProps = {
   content: string
   variant?: string
   animation?: string
   as?: 'heading' | 'body'
 }
 
-function renderMarkdown(content: string) {
-  return content
+function renderMarkdown(rawContent: string): string {
+  return rawContent
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br />')
 }
 
 function Typewriter({ content }: { content: string }) {
-  const [displayed, setDisplayed] = useState('')
+  const [displayedText, setDisplayedText] = useState('')
 
   useEffect(() => {
-    setDisplayed('')
-    let i = 0
-    const interval = setInterval(() => {
-      i++
-      setDisplayed(content.slice(0, i))
-      if (i >= content.length) clearInterval(interval)
+    setDisplayedText('')
+    let characterIndex = 0
+    const typewriterTimer = setInterval(() => {
+      characterIndex++
+      setDisplayedText(content.slice(0, characterIndex))
+      if (characterIndex >= content.length) clearInterval(typewriterTimer)
     }, 40)
-    return () => clearInterval(interval)
+
+    return () => clearInterval(typewriterTimer)
   }, [content])
 
-  return <span dangerouslySetInnerHTML={{ __html: renderMarkdown(displayed) }} />
+  return <span dangerouslySetInnerHTML={{ __html: renderMarkdown(displayedText) }} />
 }
 
 export default function Text({
@@ -39,20 +40,20 @@ export default function Text({
   variant = 'romantic',
   animation = 'none',
   as = 'body',
-}: Props) {
+}: TextProps) {
   const variantConfig = getTextVariant(variant)
-  const animConfig = getTextAnimation(animation)
+  const animationConfig = getTextAnimation(animation)
 
-  const className =
+  const appliedClassName =
     as === 'heading'
       ? variantConfig?.headingClass ?? ''
       : variantConfig?.bodyClass ?? ''
 
-  const isTypewriter = (animConfig as any)?.typewriter === true
+  const isTypewriterAnimation = (animationConfig as any)?.typewriter === true
 
-  if (isTypewriter) {
+  if (isTypewriterAnimation) {
     return (
-      <div className={className}>
+      <div className={appliedClassName}>
         <Typewriter content={content} />
         <span className="animate-pulse">|</span>
       </div>
@@ -62,10 +63,10 @@ export default function Text({
   return (
     <motion.div
       key={`${variant}-${animation}`}
-      initial={animConfig?.variants?.initial ?? {}}
-      animate={animConfig?.variants?.animate ?? {}}
-      transition={animConfig?.variants?.transition ?? {}}
-      className={className}
+      initial={animationConfig?.variants?.initial ?? {}}
+      animate={animationConfig?.variants?.animate ?? {}}
+      transition={animationConfig?.variants?.transition ?? {}}
+      className={appliedClassName}
       dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
     />
   )

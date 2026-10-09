@@ -2,20 +2,25 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { FaChevronDown } from 'react-icons/fa'
 
-type Props = {
+type AccordionProps = {
   title: string
   children: React.ReactNode
   defaultOpen?: boolean
   subtitle?: string
 }
 
-export function Accordion({ title, children, defaultOpen = false, subtitle }: Props) {
-  const [open, setOpen] = useState(defaultOpen)
+export function Accordion({
+  title,
+  children,
+  defaultOpen = false,
+  subtitle,
+}: AccordionProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition"
       >
         <div className="flex flex-col items-start">
@@ -25,7 +30,7 @@ export function Accordion({ title, children, defaultOpen = false, subtitle }: Pr
           )}
         </div>
         <motion.div
-          animate={{ rotate: open ? 180 : 0 }}
+          animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
           <FaChevronDown className="text-gray-400 text-xs" />
@@ -33,7 +38,7 @@ export function Accordion({ title, children, defaultOpen = false, subtitle }: Pr
       </button>
 
       <AnimatePresence initial={false}>
-        {open && (
+        {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

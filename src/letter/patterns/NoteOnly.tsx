@@ -18,7 +18,7 @@ export type NoteOnlyConfig = {
   submitButton: { text: string; color: string; shape: string; size: string; variant: string; animation: string }
 }
 
-type Props = {
+type NoteOnlyProps = {
   config: NoteOnlyConfig
   onReply?: (reply: string) => void
   onNote: (note: string) => void
@@ -28,19 +28,26 @@ type Props = {
   preview?: boolean
 }
 
-export default function NoteOnly({ config, onNote, existingReply, senderName, recipientName, preview = false }: Props) {
-  const [note, setNote] = useState('')
-  const [saving, setSaving] = useState(false)
+export default function NoteOnly({
+  config,
+  onNote,
+  existingReply,
+  senderName,
+  recipientName,
+  preview = false,
+}: NoteOnlyProps) {
+  const [noteText, setNoteText] = useState('')
+  const [isSaving, setIsSaving] = useState(false)
 
   const isReplied = !!existingReply
-  const replyNote = existingReply?.note ?? ''
+  const replyNoteText = existingReply?.note ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
   const handleSubmit = async () => {
     if (preview || isReplied) return
-    setSaving(true)
-    await onNote(note)
-    setSaving(false)
+    setIsSaving(true)
+    await onNote(noteText)
+    setIsSaving(false)
   }
 
   return (
@@ -54,7 +61,12 @@ export default function NoteOnly({ config, onNote, existingReply, senderName, re
         )}
 
         {config.header?.enabled && (
-          <Text content={config.header.text} variant={config.header.variant} animation={config.header.animation} as="heading" />
+          <Text
+            content={config.header.text}
+            variant={config.header.variant}
+            animation={config.header.animation}
+            as="heading"
+          />
         )}
 
         <MessageBox
@@ -68,16 +80,16 @@ export default function NoteOnly({ config, onNote, existingReply, senderName, re
         {!isReplied && (
           <div className="space-y-3">
             <MessageBox
-              content={note}
+              content={noteText}
               variant={config.messageBox.variant}
               animation="fade"
               editable
-              onChange={setNote}
+              onChange={setNoteText}
               placeholder="Write your reply..."
             />
             <div className="flex justify-center">
               <Button
-                text={saving ? 'Saving...' : config.submitButton.text}
+                text={isSaving ? 'Saving...' : config.submitButton.text}
                 color={config.submitButton.color as any}
                 shape={config.submitButton.shape as any}
                 size={config.submitButton.size as any}
@@ -94,9 +106,11 @@ export default function NoteOnly({ config, onNote, existingReply, senderName, re
             <p className="text-xs tracking-[0.2em] text-gray-600 font-semibold">
               <span className="uppercase">{recipientName}</span> Replied
             </p>
-            {replyNote && (
-              <div className={`${textVariantConfig?.bodyClass ?? 'text-base text-gray-700 leading-relaxed'} italic`}>
-                "{replyNote}"
+            {replyNoteText && (
+              <div
+                className={`${textVariantConfig?.bodyClass ?? 'text-base text-gray-700 leading-relaxed'} italic`}
+              >
+                "{replyNoteText}"
               </div>
             )}
           </div>

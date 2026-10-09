@@ -1,43 +1,57 @@
 import { Accordion, Button } from '../../core/components/ui'
 import { MESSAGE_BOX_VARIANTS, MESSAGE_BOX_ANIMATIONS } from '../message-box'
 
-type Props = {
+type MessageBoxPickerProps = {
   variant: string
   animation: string
-  onVariantChange: (v: string) => void
-  onAnimationChange: (v: string) => void
+  onVariantChange: (newVariant: string) => void
+  onAnimationChange: (newAnimation: string) => void
 }
 
-export function MessageBoxPicker({ variant, animation, onVariantChange, onAnimationChange }: Props) {
-  const vName = MESSAGE_BOX_VARIANTS.find((v) => v.id === variant)?.config?.name ?? variant
-  const aName = MESSAGE_BOX_ANIMATIONS.find((a) => a.id === animation)?.config?.name ?? animation
+export function MessageBoxPicker({
+  variant,
+  animation,
+  onVariantChange,
+  onAnimationChange,
+}: MessageBoxPickerProps) {
+  const variantName =
+    MESSAGE_BOX_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ??
+    variant
+  const animationName =
+    MESSAGE_BOX_ANIMATIONS.find((animationEntry) => animationEntry.id === animation)?.config
+      ?.name ?? animation
+
   return (
-    <Accordion title="Message Box" subtitle={`${vName} · ${aName}`}>
+    <Accordion title="Message Box" subtitle={`${variantName} · ${animationName}`}>
       <div className="space-y-4">
         <div>
-          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Style</h3>
+          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+            Style
+          </h3>
           <div className="flex flex-wrap gap-2">
-            {MESSAGE_BOX_VARIANTS.map((v) => (
+            {MESSAGE_BOX_VARIANTS.map((variantEntry) => (
               <Button
-                key={v.id}
-                onClick={() => onVariantChange(v.id)}
-                variant={variant === v.id ? 'active' : 'outline'}
+                key={variantEntry.id}
+                onClick={() => onVariantChange(variantEntry.id)}
+                variant={variant === variantEntry.id ? 'active' : 'outline'}
               >
-                {v.config?.name ?? v.id}
+                {variantEntry.config?.name ?? variantEntry.id}
               </Button>
             ))}
           </div>
         </div>
         <div>
-          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Animation</h3>
+          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+            Animation
+          </h3>
           <div className="flex flex-wrap gap-2">
-            {MESSAGE_BOX_ANIMATIONS.map((a) => (
+            {MESSAGE_BOX_ANIMATIONS.map((animationEntry) => (
               <Button
-                key={a.id}
-                onClick={() => onAnimationChange(a.id)}
-                variant={animation === a.id ? 'active' : 'outline'}
+                key={animationEntry.id}
+                onClick={() => onAnimationChange(animationEntry.id)}
+                variant={animation === animationEntry.id ? 'active' : 'outline'}
               >
-                {a.config?.name ?? a.id}
+                {animationEntry.config?.name ?? animationEntry.id}
               </Button>
             ))}
           </div>

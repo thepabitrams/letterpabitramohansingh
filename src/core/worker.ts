@@ -6,69 +6,80 @@ import { createAuth } from './auth'
 import { getDb, type Bindings } from './db/client'
 import { letters } from './db/schema'
 
-type Variables = {
+type AppVariables = {
   user: { id: string; email: string; name: string; image?: string } | null
 }
 
-const app = new Hono<{ Bindings: Bindings; Variables: Variables }>()
+const app = new Hono<{ Bindings: Bindings; Variables: AppVariables }>()
 
-app.use('*', cors({
-  origin: ['http://localhost:5173', 'https://letter.pabitramohansingh.workers.dev'],
-  credentials: true,
-}))
+app.use(
+  '*',
+  cors({
+    origin: ['http://localhost:5173', 'https://letter.pabitramohansingh.workers.dev'],
+    credentials: true,
+  })
+)
 
-app.all('/api/auth/*', (c) => {
-  const auth = createAuth(c.env)
-  return auth.handler(c.req.raw)
+app.all('/api/auth/*', (context) => {
+  const auth = createAuth(context.env)
+  return auth.handler(context.req.raw)
 })
 
-app.use('/api/*', async (c, next) => {
-  const auth = createAuth(c.env)
-  const session = await auth.api.getSession({ headers: c.req.raw.headers })
-  c.set('user', session?.user ?? null)
+app.use('/api/*', async (context, next) => {
+  const auth = createAuth(context.env)
+  const session = await auth.api.getSession({ headers: context.req.raw.headers })
+  context.set('user', session?.user ?? null)
   await next()
 })
 
-app.get('/api/health', (c) => c.json({ ok: true, time: Date.now() }))
+app.get('/api/health', (context) => context.json({ ok: true, time: Date.now() }))
 
-app.get('/api/me', (c) => {
-  const user = c.get('user')
-  if (!user) return c.json({ error: 'Unauthorized' }, 401)
-  return c.json(user)
+app.get('/api/me', (context) => {
+  const user = context.get('user')
+  if (!user) return context.json({ error: 'Unauthorized' }, 401)
+  return context.json(user)
 })
 
-app.post('/api/letters', async (c) => {
-  const user = c.get('user')
-  if (!user) return c.json({ error: 'Unauthorized' }, 401)
+app.post('/api/letters', async (context) => {
+  const user = context.get('user')
+  if (!user) return context.json({ error: 'Unauthorized' }, 401)
 
-  const body = await c.req.json()
-  const { senderName, recipientName, message, header, pattern, config, expiryDays } = body
+  const requestBody = await context.req.json()
+  const { senderName, recipientName, message, header, pattern, config, expiryDays } = requestBody
 
   if (!senderName || !recipientName || !message) {
-    return c.json({ error: 'Missing fields' }, 400)
+    return context.json({ error: 'Missing fields' }, 400)
   }
 
   if (expiryDays !== 7 && expiryDays !== 15) {
-    return c.json({ error: 'expiryDays must be 7 or 15' }, 400)
+    return context.json({ error: 'expiryDays must be 7 or 15' }, 400)
   }
 
-  const db = getDb(c.env)
+  const db = getDb(context.env)
   const now = Date.now()
 
-  const senderSlug = senderName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-  const recipientSlug = recipientName.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+  const senderSlug = senderName
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+  const recipientSlug = recipientName
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
   const slug = `${senderSlug}-${recipientSlug}`
 
-  const existing = await db.select().from(letters).where(eq(letters.slug, slug)).get()
-  if (existing) {
-    return c.json({ error: 'This letter already exists', slug }, 409)
+  const existingLetter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
+  if (existingLetter) {
+    return context.json({ error: 'This letter already exists', slug }, 409)
   }
 
-  const id = crypto.randomUUID()
-  const expiresAt = now + expiryDays * 86400000
+  const letterId = crypto.randomUUID()
+  const expiresAt = now + expiryDays * 86_400_000
 
   await db.insert(letters).values({
-    id,
+    id: letterId,
     userId: user.id,
     slug,
     senderName,
@@ -82,110 +93,118 @@ app.post('/api/letters', async (c) => {
     expiresAt,
   })
 
-  return c.json({
-    id,
+  return context.json({
+    id: letterId,
     url: `/${senderSlug}/${recipientSlug}`,
     slug,
   })
 })
 
-app.get('/api/letters/:sender/:recipient', async (c) => {
-  const sender = c.req.param('sender')
-  const recipient = c.req.param('recipient')
-  const slug = `${sender}-${recipient}`
+app.get('/api/letters/:sender/:recipient', async (context) => {
+  const senderSlug = context.req.param('sender')
+  const recipientSlug = context.req.param('recipient')
+  const slug = `${senderSlug}-${recipientSlug}`
 
-  const db = getDb(c.env)
+  const db = getDb(context.env)
   const now = Date.now()
 
-  const letter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
+  const letterRecord = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
-  if (!letter) return c.json({ error: 'Not found' }, 404)
-  if (letter.expiresAt < now) return c.json({ error: 'Expired' }, 410)
+  if (!letterRecord) return context.json({ error: 'Not found' }, 404)
+  if (letterRecord.expiresAt < now) return context.json({ error: 'Expired' }, 410)
 
-  if (letter.status === 'pending') {
-    await db.update(letters)
+  if (letterRecord.status === 'pending') {
+    await db
+      .update(letters)
       .set({ status: 'opened', openedAt: now })
-      .where(eq(letters.id, letter.id))
-    letter.status = 'opened'
-    letter.openedAt = now
+      .where(eq(letters.id, letterRecord.id))
+
+    letterRecord.status = 'opened'
+    letterRecord.openedAt = now
   }
 
-  return c.json({
-    ...letter,
-    config: JSON.parse(letter.config),
+  return context.json({
+    ...letterRecord,
+    config: JSON.parse(letterRecord.config),
   })
 })
 
-app.post('/api/letters/:sender/:recipient/reply', async (c) => {
-  const sender = c.req.param('sender')
-  const recipient = c.req.param('recipient')
-  const slug = `${sender}-${recipient}`
+app.post('/api/letters/:sender/:recipient/reply', async (context) => {
+  const senderSlug = context.req.param('sender')
+  const recipientSlug = context.req.param('recipient')
+  const slug = `${senderSlug}-${recipientSlug}`
 
-  const body = await c.req.json()
-  const { reply } = body
+  const requestBody = await context.req.json()
+  const { reply } = requestBody
 
-  if (!reply) return c.json({ error: 'Reply required' }, 400)
+  if (!reply) return context.json({ error: 'Reply required' }, 400)
 
-  const db = getDb(c.env)
-  const letter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
+  const db = getDb(context.env)
+  const letterRecord = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
-  if (!letter) return c.json({ error: 'Not found' }, 404)
-  if (letter.status === 'replied') return c.json({ error: 'Already replied' }, 409)
+  if (!letterRecord) return context.json({ error: 'Not found' }, 404)
+  if (letterRecord.status === 'replied') {
+    return context.json({ error: 'Already replied' }, 409)
+  }
 
   const now = Date.now()
-  await db.update(letters)
+  await db
+    .update(letters)
     .set({
       status: 'replied',
       reply,
       repliedAt: now,
     })
-    .where(eq(letters.id, letter.id))
+    .where(eq(letters.id, letterRecord.id))
 
-  return c.json({ ok: true })
+  return context.json({ ok: true })
 })
 
-app.patch('/api/letters/:sender/:recipient/note', async (c) => {
-  const sender = c.req.param('sender')
-  const recipient = c.req.param('recipient')
-  const slug = `${sender}-${recipient}`
+app.patch('/api/letters/:sender/:recipient/note', async (context) => {
+  const senderSlug = context.req.param('sender')
+  const recipientSlug = context.req.param('recipient')
+  const slug = `${senderSlug}-${recipientSlug}`
 
-  const body = await c.req.json()
-  const { note } = body
+  const requestBody = await context.req.json()
+  const { note } = requestBody
 
-  const db = getDb(c.env)
-  const letter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
+  const db = getDb(context.env)
+  const letterRecord = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
-  if (!letter) return c.json({ error: 'Not found' }, 404)
+  if (!letterRecord) return context.json({ error: 'Not found' }, 404)
 
-  await db.update(letters)
+  await db
+    .update(letters)
     .set({ replyNote: note ?? null })
-    .where(eq(letters.id, letter.id))
+    .where(eq(letters.id, letterRecord.id))
 
-  return c.json({ ok: true })
+  return context.json({ ok: true })
 })
 
-app.get('/api/my-letters', async (c) => {
-  const user = c.get('user')
-  if (!user) return c.json({ error: 'Unauthorized' }, 401)
+app.get('/api/my-letters', async (context) => {
+  const user = context.get('user')
+  if (!user) return context.json({ error: 'Unauthorized' }, 401)
 
-  const db = getDb(c.env)
-  const rows = await db.select().from(letters).where(eq(letters.userId, user.id)).all()
+  const db = getDb(context.env)
+  const letterRows = await db.select().from(letters).where(eq(letters.userId, user.id)).all()
 
-  return c.json(rows.map((r) => ({
-    ...r,
-    config: JSON.parse(r.config),
-  })))
+  return context.json(
+    letterRows.map((letterRow) => ({
+      ...letterRow,
+      config: JSON.parse(letterRow.config),
+    }))
+  )
 })
 
-async function runCleanup(env: Bindings) {
-  const db = getDb(env)
+async function runCleanup(environment: Bindings) {
+  const db = getDb(environment)
   const now = Date.now()
   await db.delete(letters).where(sql`${letters.expiresAt} < ${now}`)
 }
 
 export default {
   fetch: app.fetch,
-  async scheduled(_event: ScheduledEvent, env: Bindings, ctx: ExecutionContext) {
-    ctx.waitUntil(runCleanup(env))
+  async scheduled(_event: ScheduledEvent, environment: Bindings, executionContext: ExecutionContext) {
+    executionContext.waitUntil(runCleanup(environment))
   },
 }

@@ -1,14 +1,14 @@
 /* src/letter/editor/Preview.tsx */
 import { PATTERNS, type PatternId } from '../patterns'
 
-type Props = {
+type PreviewProps = {
   pattern: PatternId
   message: string
   config: any
   onReply?: (reply: string, note: string) => void
 }
 
-export function Preview({ pattern, message, config, onReply }: Props) {
+export function Preview({ pattern, message, config, onReply }: PreviewProps) {
   const PatternComponent = PATTERNS[pattern]
 
   return (

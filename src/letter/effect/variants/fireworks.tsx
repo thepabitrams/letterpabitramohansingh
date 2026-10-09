@@ -8,22 +8,23 @@ export default {
   name: 'Fireworks',
   component: () => (
     <>
-      {Array.from({ length: 10 }).map((_, i) => {
-        const Icon = i % 2 === 0 ? FaStar : FaRegStar
+      {Array.from({ length: 10 }).map((_, particleIndex) => {
+        const StarIcon = particleIndex % 2 === 0 ? FaStar : FaRegStar
+
         return (
           <motion.div
-            key={i}
+            key={particleIndex}
             initial={{ scale: 0, opacity: 0, rotate: 0 }}
             animate={{ scale: [0, 1.4, 0], opacity: [0, 1, 0], rotate: [0, 180, 360] }}
-            transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+            transition={{ duration: 2, repeat: Infinity, delay: particleIndex * 0.5 }}
             className="absolute"
             style={{
               left: `${10 + Math.random() * 75}%`,
               top: `${15 + Math.random() * 60}%`,
-              color: FIREWORK_COLORS[i % FIREWORK_COLORS.length],
+              color: FIREWORK_COLORS[particleIndex % FIREWORK_COLORS.length],
             }}
           >
-            <Icon size={28 + Math.random() * 16} />
+            <StarIcon size={28 + Math.random() * 16} />
           </motion.div>
         )
       })}

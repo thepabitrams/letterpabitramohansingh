@@ -4,27 +4,28 @@ import { motion, AnimatePresence } from 'motion/react'
 import { FcGoogle } from 'react-icons/fc'
 import { authClient } from '../../lib/auth-client'
 
-type Props = {
+type LoginModalProps = {
   open: boolean
   onClose: () => void
   onSuccess: () => void
 }
 
-export function LoginModal({ open, onClose, onSuccess }: Props) {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+export function LoginModal({ open, onClose, onSuccess }: LoginModalProps) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleGoogleLogin = async () => {
-    setLoading(true)
-    setError('')
+    setIsLoading(true)
+    setErrorMessage('')
+
     try {
       await authClient.signIn.social({
         provider: 'google',
         callbackURL: window.location.origin + '/',
       })
-    } catch (e: any) {
-      setError(e.message ?? 'Login failed')
-      setLoading(false)
+    } catch (error: any) {
+      setErrorMessage(error.message ?? 'Login failed')
+      setIsLoading(false)
     }
   }
 
@@ -42,7 +43,7 @@ export function LoginModal({ open, onClose, onSuccess }: Props) {
             initial={{ scale: 0.96, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.96, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
             className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-xl"
           >
             <h2 className="text-2xl font-normal text-gray-800 mb-1">Sign in</h2>
@@ -50,15 +51,15 @@ export function LoginModal({ open, onClose, onSuccess }: Props) {
 
             <button
               onClick={handleGoogleLogin}
-              disabled={loading}
+              disabled={isLoading}
               className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-md py-2.5 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-60"
             >
               <FcGoogle className="text-xl" />
-              {loading ? 'Signing in...' : 'Continue with Google'}
+              {isLoading ? 'Signing in...' : 'Continue with Google'}
             </button>
 
-            {error && (
-              <p className="text-xs text-red-600 mt-3">{error}</p>
+            {errorMessage && (
+              <p className="text-xs text-red-600 mt-3">{errorMessage}</p>
             )}
 
             <div className="mt-6 pt-4 border-t border-gray-100">

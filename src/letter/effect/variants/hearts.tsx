@@ -8,21 +8,21 @@ export default {
   name: 'Hearts',
   component: () => (
     <>
-      {Array.from({ length: 15 }).map((_, i) => (
+      {Array.from({ length: 15 }).map((_, particleIndex) => (
         <motion.div
-          key={i}
+          key={particleIndex}
           initial={{ top: '100%', opacity: 0, rotate: 0 }}
           animate={{ top: '-10%', opacity: [0, 1, 1, 0], rotate: [0, 20, -20, 0] }}
           transition={{
             duration: 6 + Math.random() * 4,
             repeat: Infinity,
-            delay: i * 0.4,
+            delay: particleIndex * 0.4,
             ease: 'linear',
           }}
           className="absolute"
           style={{
             left: `${Math.random() * 95}%`,
-            color: HEART_COLORS[i % HEART_COLORS.length],
+            color: HEART_COLORS[particleIndex % HEART_COLORS.length],
           }}
         >
           <FaHeart size={20 + Math.random() * 12} />

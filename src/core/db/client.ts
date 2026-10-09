@@ -10,6 +10,6 @@ export type Bindings = {
   BETTER_AUTH_URL: string
 }
 
-export function getDb(env: Bindings) {
-  return drizzle(env.DB, { schema })
+export function getDb(environment: Bindings) {
+  return drizzle(environment.DB, { schema })
 }

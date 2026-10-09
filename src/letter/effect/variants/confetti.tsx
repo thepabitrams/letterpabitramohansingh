@@ -7,12 +7,13 @@ export default {
   name: 'Confetti',
   component: () => (
     <>
-      {Array.from({ length: 30 }).map((_, i) => {
-        const isSquare = i % 2 === 0
-        const size = 6 + Math.random() * 6
+      {Array.from({ length: 30 }).map((_, particleIndex) => {
+        const isSquare = particleIndex % 2 === 0
+        const particleSize = 6 + Math.random() * 6
+
         return (
           <motion.div
-            key={i}
+            key={particleIndex}
             initial={{ top: '-5%', rotate: 0, opacity: 1 }}
             animate={{ top: '105%', rotate: 720, opacity: [1, 1, 0] }}
             transition={{
@@ -24,9 +25,9 @@ export default {
             className="absolute"
             style={{
               left: `${Math.random() * 98}%`,
-              width: size,
-              height: isSquare ? size : size * 0.4,
-              backgroundColor: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+              width: particleSize,
+              height: isSquare ? particleSize : particleSize * 0.4,
+              backgroundColor: CONFETTI_COLORS[particleIndex % CONFETTI_COLORS.length],
               borderRadius: isSquare ? '50%' : '2px',
             }}
           />
