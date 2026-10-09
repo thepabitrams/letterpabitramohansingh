@@ -57,11 +57,20 @@ export function buildTemplate(data: TemplateData): string {
     `
   }
 
+  const senderForScript = (data.senderName || 'ME').replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+  const recipientForScript = (data.recipientName || 'YOU').replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+
   const allScripts = [
     data.effectScript,
     data.backgroundAnimationScript,
     data.textAnimationScript,
-  ].filter((script) => script && script.trim())
+  ]
+    .filter((script) => script && script.trim())
+    .map((script) =>
+      script
+        .replace(/__SENDER__/g, senderForScript)
+        .replace(/__RECIPIENT__/g, recipientForScript)
+    )
 
   const scriptsHtml = allScripts
     .map((script) => `<script type="module">${script}</script>`)

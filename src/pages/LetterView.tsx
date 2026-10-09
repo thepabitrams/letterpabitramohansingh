@@ -59,7 +59,7 @@ export function LetterView() {
 
     try {
       const dataUrl = await captureLetterAsImage(letterRef.current)
-      downloadDataUrl(dataUrl, `letter-${slug}.png`)
+      downloadDataUrl(dataUrl, `${sender}-${slug}.png`)
     } catch (error) {
       console.error('Failed to capture image:', error)
     }
@@ -86,7 +86,7 @@ export function LetterView() {
 
     const blob = new Blob([html], { type: 'text/html' })
     const blobUrl = URL.createObjectURL(blob)
-    downloadDataUrl(blobUrl, `letter-${slug}.html`)
+    downloadDataUrl(blobUrl, `${sender}-${slug}.html`)
     URL.revokeObjectURL(blobUrl)
   }
 
