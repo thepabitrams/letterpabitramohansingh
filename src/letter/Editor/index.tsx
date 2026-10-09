@@ -1,39 +1,60 @@
-/* src/letter/Editor/index.tsx */
-import type { PresetId, LetterConfig } from '../presets/types'
-import { StylePicker } from './StylePicker'
-import { ButtonEditor } from './ButtonEditor'
+/* src/letter/editor/index.tsx */
+import type { PatternId } from '../patterns'
+import { BackgroundPicker } from './BackgroundPicker'
+import { EffectPicker } from './EffectPicker'
+import { TextPicker } from './TextPicker'
+import { MessageBoxPicker } from './MessageBoxPicker'
+import { ButtonPicker } from './ButtonPicker'
 import { Preview } from './Preview'
 
 type Props = {
-  preset: PresetId
+  pattern: PatternId
   message: string
   senderName: string
   recipientName: string
-  config: LetterConfig
-  update: (key: keyof LetterConfig, value: any) => void
+  config: any
+  update: (key: string, value: any) => void
 }
 
-export function Editor({
-  preset,
-  message,
-  senderName,
-  recipientName,
-  config,
-  update,
-}: Props) {
+export function Editor({ pattern, message, config, update }: Props) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-      <div className="space-y-6">
-        <StylePicker config={config} update={update} />
-        <ButtonEditor config={config} update={update} />
+      <div className="flex flex-col gap-4">
+        <BackgroundPicker value={config.background} onChange={(v) => update('background', v)} />
+        <EffectPicker value={config.effect} onChange={(v) => update('effect', v)} />
+        <TextPicker
+          variant={config.textVariant}
+          animation={config.textAnimation}
+          onVariantChange={(v) => update('textVariant', v)}
+          onAnimationChange={(v) => update('textAnimation', v)}
+        />
+        <MessageBoxPicker
+          variant={config.messageBox.variant}
+          animation={config.messageBox.animation}
+          onVariantChange={(v) => update('messageBox', { ...config.messageBox, variant: v })}
+          onAnimationChange={(v) => update('messageBox', { ...config.messageBox, animation: v })}
+        />
+
+        {pattern === 'two-choice' ? (
+          <ButtonPicker
+            pattern="two-choice"
+            yes={config.buttons.yes}
+            no={config.buttons.no}
+            onYesChange={(c) => update('buttons', { ...config.buttons, yes: c })}
+            onNoChange={(c) => update('buttons', { ...config.buttons, no: c })}
+          />
+        ) : (
+          <ButtonPicker
+            pattern="one-choice"
+            single={config.button}
+            onSingleChange={(c) => update('button', c)}
+          />
+        )}
       </div>
-      <Preview
-        preset={preset}
-        message={message}
-        senderName={senderName}
-        recipientName={recipientName}
-        config={config}
-      />
+
+      <Preview pattern={pattern} message={message} config={config} />
     </div>
   )
 }
+
+export default Editor

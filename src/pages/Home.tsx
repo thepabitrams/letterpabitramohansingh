@@ -1,35 +1,36 @@
 /* src/pages/Home.tsx */
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Header, Footer, LetterType, FromTo, Message } from '../core/components/layout'
+import { Header, Footer, Pattern , FromTo, Message } from '../core/components/layout'
 import { Button, Card, Container, LoginModal } from '../core/components/ui'
 import { Editor } from '../letter/Editor'
-import { PRESET_LIST } from '../letter/presets'
-import type { PresetId, LetterConfig } from '../letter/presets/types'
+import type { PatternId } from '../letter/patterns'
 
 export function Home() {
   const [user, setUser] = useState<any>(null)
   const [loginOpen, setLoginOpen] = useState(false)
-  const [preset, setPreset] = useState<PresetId>('love')
+  const [pattern, setPattern] = useState<PatternId>('two-choice')
   const [message, setMessage] = useState('')
   const [recipientName, setRecipientName] = useState('')
   const [senderName, setSenderName] = useState('')
   const [generatedLink, setGeneratedLink] = useState('')
-  const [config, setConfig] = useState<LetterConfig>({
+  const [config, setConfig] = useState<any>({
     background: 'blue',
-    animation: 'hearts',
-    messageBoxStyle: 'romantic',
-    yesText: 'Yes',
-    yesColor: 'green',
-    yesShape: 'pill',
-    yesAnimation: 'pulse',
-    noText: 'No',
-    noColor: 'gray',
-    noShape: 'pill',
-    noRunaway: true,
+    effect: 'hearts',
+    textVariant: 'romantic',
+    textAnimation: 'fade',
+    messageBox: { variant: 'romantic', animation: 'fade' },
+    header: { enabled: false, text: '', variant: 'romantic', animation: 'fade' },
+    buttons: {
+      yes: { text: 'Yes', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: 'pulse' },
+      no: { text: 'No', color: 'gray', shape: 'pill', size: 'md', variant: 'solid', animation: 'runaway' },
+    },
+    button: {
+      text: 'Accept', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: 'pulse',
+    },
   })
 
-  const update = (key: keyof LetterConfig, value: any) => setConfig({ ...config, [key]: value })
+  const update = (key: string, value: any) => setConfig({ ...config, [key]: value })
 
   const handleGenerate = () => {
     if (!user) return setLoginOpen(true)
@@ -50,11 +51,7 @@ export function Home() {
 
       <main className="py-6 px-4">
         <Container>
-          <LetterType
-            options={PRESET_LIST}
-            selected={preset}
-            onSelect={(id) => setPreset(id as PresetId)}
-          />
+          <Pattern selected={pattern} onSelect={setPattern} />
 
           <FromTo
             senderName={senderName} setSenderName={setSenderName}
@@ -64,7 +61,7 @@ export function Home() {
           <Message message={message} setMessage={setMessage} />
 
           <Editor
-            preset={preset}
+            pattern={pattern}
             message={message}
             senderName={senderName}
             recipientName={recipientName}

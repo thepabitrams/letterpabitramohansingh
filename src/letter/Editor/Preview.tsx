@@ -1,29 +1,29 @@
-/* src/letter/Editor/Preview.tsx */
-import { PRESETS } from '../presets'
-import type { PresetId, LetterConfig } from '../presets/types'
+/* src/letter/editor/Preview.tsx */
+import { PATTERNS, type PatternId } from '../patterns'
 
 type Props = {
-  preset: PresetId
+  pattern: PatternId
   message: string
-  senderName: string
-  recipientName: string
-  config: LetterConfig
+  config: any
+  onReply?: (reply: string, note: string) => void
 }
 
-export function Preview({ preset, message, senderName, recipientName, config }: Props) {
-  const PresetComponent = PRESETS[preset]
+export function Preview({ pattern, message, config, onReply }: Props) {
+  const PatternComponent = PATTERNS[pattern]
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white h-full flex">
+    <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white flex">
       <div className="flex-1 flex">
-        <PresetComponent
-          message={message || 'Your beautiful letter will appear here...'}
-          senderName={senderName || 'You'}
-          recipientName={recipientName || 'Her'}
-          onReply={() => {}}
-          options={config}
+        <PatternComponent
+          config={{
+            ...config,
+            message: message || 'Your beautiful letter will appear here...',
+          }}
+          onReply={onReply ?? (() => {})}
         />
       </div>
     </div>
   )
 }
+
+export default Preview
