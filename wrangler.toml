@@ -1,0 +1,8 @@
+name = "lovepabitramohansingh"
+main = "src/worker.ts"
+compatibility_date = "2026-10-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lovepabitramohansingh-db"
+database_id = "c8bd0dd5-e812-4f8f-a4fb-8673e9159dab"

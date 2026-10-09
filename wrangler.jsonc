@@ -1,0 +1,27 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lovepabitramohansingh",
+  "main": "src/core/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "observability": {
+    "enabled": true
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "lovepabitramohansingh-db",
+      "database_id": "c8bd0dd5-e812-4f8f-a4fb-8673e9159dab"
+    }
+  ],
+
+  "triggers": {
+    "crons": ["0 3 * * *"]
+  },
+
+  "vars": {
+    "BETTER_AUTH_URL": "http://localhost:5173"
+  }
+}

@@ -1,0 +1,35 @@
+/* src/core/components/layout/Footer.tsx */
+import { FaCoffee, FaGithub } from 'react-icons/fa'
+
+export function Footer() {
+  return (
+    <footer className="bg-white border-t border-gray-200">
+      <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <a
+            href="https://buymeacoffee.com"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
+          >
+            <FaCoffee />
+            Buy me a coffee
+          </a>
+          <a
+            href="https://github.com"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
+          >
+            <FaGithub />
+            GitHub
+          </a>
+        </div>
+
+        <p className="text-xs text-gray-400">
+          © {new Date().getFullYear()} Pabitra Mohan Singh
+        </p>
+      </div>
+    </footer>
+  )
+}
