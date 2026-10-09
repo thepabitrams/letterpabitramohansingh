@@ -11,7 +11,7 @@ export function Footer({ actions }: FooterProps) {
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-4">
           <a
-            href="https://buymeacoffee.com"
+            href="https://buymeacoffee.com/pabitramohansingh"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
@@ -20,7 +20,7 @@ export function Footer({ actions }: FooterProps) {
             Buy me a coffee
           </a>
           <a
-            href="https://github.com"
+            href="https://github.com/thepabitrams"
             target="_blank"
             rel="noreferrer"
             className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
