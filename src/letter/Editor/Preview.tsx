@@ -20,6 +20,7 @@ export function Preview({ pattern, message, config, onReply }: Props) {
             message: message || 'Your beautiful letter will appear here...',
           }}
           onReply={onReply ?? (() => {})}
+          preview
         />
       </div>
     </div>

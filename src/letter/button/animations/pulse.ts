@@ -4,6 +4,6 @@ export default {
   category: 'motion' as const,
   variants: {
     scale: [1, 1.08, 1],
-    transition: { repeat: Infinity, duration: 1.4 },
   },
+  transition: { repeat: Infinity, duration: 1.4 },
 }

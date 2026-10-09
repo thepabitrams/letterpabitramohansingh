@@ -1,7 +1,7 @@
 /* src/pages/Home.tsx */
 import { useState } from 'react'
 import { motion } from 'motion/react'
-import { Header, Footer, Pattern , FromTo, Message } from '../core/components/layout'
+import { Header, Footer, Pattern, FromTo, Message } from '../core/components/layout'
 import { Button, Card, Container, LoginModal } from '../core/components/ui'
 import { Editor } from '../letter/Editor'
 import type { PatternId } from '../letter/patterns'
@@ -27,6 +27,9 @@ export function Home() {
     },
     button: {
       text: 'Accept', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: 'pulse',
+    },
+    submitButton: {
+      text: 'Submit', color: 'blue', shape: 'rounded', size: 'md', variant: 'solid', animation: 'none',
     },
   })
 

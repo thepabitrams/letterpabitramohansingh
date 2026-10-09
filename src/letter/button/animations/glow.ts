@@ -5,9 +5,9 @@ export default {
   variants: {
     boxShadow: [
       '0 0 0px rgba(255,255,255,0)',
-      '0 0 20px rgba(255,255,255,0.8)',
+      '0 0 25px rgba(255,255,255,0.9)',
       '0 0 0px rgba(255,255,255,0)',
     ],
-    transition: { repeat: Infinity, duration: 2 },
   },
+  transition: { repeat: Infinity, duration: 1.5 },
 }

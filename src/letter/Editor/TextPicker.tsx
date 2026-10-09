@@ -8,9 +8,15 @@ type Props = {
   onAnimationChange: (v: string) => void
 }
 
-export function TextPicker({ variant, animation, onVariantChange, onAnimationChange }: Props) {
+export function TextPicker({
+  variant,
+  animation,
+  onVariantChange,
+  onAnimationChange,
+}: Props) {
   const vName = TEXT_VARIANTS.find((v) => v.id === variant)?.config?.name ?? variant
   const aName = TEXT_ANIMATIONS.find((a) => a.id === animation)?.config?.name ?? animation
+
   return (
     <Accordion title="Text" subtitle={`${vName} · ${aName}`}>
       <div className="space-y-4">
@@ -28,6 +34,7 @@ export function TextPicker({ variant, animation, onVariantChange, onAnimationCha
             ))}
           </div>
         </div>
+
         <div>
           <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">Animation</h3>
           <div className="flex flex-wrap gap-2">

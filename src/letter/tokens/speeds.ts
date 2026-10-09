@@ -1,0 +1,1 @@
+export const DEFAULT_TEXT_SPEED = 40

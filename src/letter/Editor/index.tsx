@@ -35,19 +35,33 @@ export function Editor({ pattern, message, config, update }: Props) {
           onAnimationChange={(v) => update('messageBox', { ...config.messageBox, animation: v })}
         />
 
-        {pattern === 'two-choice' ? (
+        {pattern === 'two-choice' && (
           <ButtonPicker
             pattern="two-choice"
             yes={config.buttons.yes}
             no={config.buttons.no}
+            submit={config.submitButton}
             onYesChange={(c) => update('buttons', { ...config.buttons, yes: c })}
             onNoChange={(c) => update('buttons', { ...config.buttons, no: c })}
+            onSubmitChange={(c) => update('submitButton', c)}
           />
-        ) : (
+        )}
+
+        {pattern === 'one-choice' && (
           <ButtonPicker
             pattern="one-choice"
             single={config.button}
+            submit={config.submitButton}
             onSingleChange={(c) => update('button', c)}
+            onSubmitChange={(c) => update('submitButton', c)}
+          />
+        )}
+
+        {pattern === 'note-only' && (
+          <ButtonPicker
+            pattern="note-only"
+            submit={config.submitButton}
+            onSubmitChange={(c) => update('submitButton', c)}
           />
         )}
       </div>

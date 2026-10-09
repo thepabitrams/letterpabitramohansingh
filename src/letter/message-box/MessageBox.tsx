@@ -1,27 +1,25 @@
+/* src/letter/message-box/MessageBox.tsx */
 import { motion } from 'motion/react'
+import { Text } from '../text'
 import { getMessageBoxVariant, getMessageBoxAnimation } from './index'
 
 type Props = {
   content: string
   variant?: string
   animation?: string
+  textVariant?: string
+  textAnimation?: string
   editable?: boolean
   onChange?: (value: string) => void
   placeholder?: string
-}
-
-function renderMarkdown(content: string) {
-  const html = content
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/\n/g, '<br />')
-  return html
 }
 
 export default function MessageBox({
   content,
   variant = 'romantic',
   animation = 'fade',
+  textVariant = 'romantic',
+  textAnimation = 'none',
   editable = false,
   onChange,
   placeholder = 'Write your message...',
@@ -29,25 +27,21 @@ export default function MessageBox({
   const variantConfig = getMessageBoxVariant(variant)
   const animConfig = getMessageBoxAnimation(animation)
 
-  const baseClass = `
-    ${variantConfig?.className ?? ''}
-    p-8 rounded-3xl text-gray-800 leading-relaxed
-    w-full
-  `
-
   if (editable) {
     return (
       <motion.div
+        key={`edit-${variant}`}
         initial={animConfig?.variants?.initial ?? {}}
         animate={animConfig?.variants?.animate ?? {}}
         transition={animConfig?.variants?.transition ?? {}}
-        className={baseClass}
+        className={`${variantConfig?.className ?? ''} px-5 py-3 rounded-2xl w-full`}
       >
-        <textarea
+        <input
+          type="text"
           value={content}
           onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
-          className="w-full bg-transparent border-none outline-none resize-none min-h-[120px] text-gray-800 leading-relaxed placeholder-gray-400"
+          className="w-full bg-transparent border-none outline-none text-gray-800 placeholder-gray-400 text-base"
         />
       </motion.div>
     )
@@ -55,11 +49,18 @@ export default function MessageBox({
 
   return (
     <motion.div
+      key={`read-${variant}-${animation}`}
       initial={animConfig?.variants?.initial ?? {}}
       animate={animConfig?.variants?.animate ?? {}}
       transition={animConfig?.variants?.transition ?? {}}
-      className={baseClass}
-      dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-    />
+      className={`${variantConfig?.className ?? ''} px-6 py-5 rounded-2xl w-full`}
+    >
+      <Text
+        content={content}
+        variant={textVariant}
+        animation={textAnimation}
+        as="body"
+      />
+    </motion.div>
   )
 }

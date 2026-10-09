@@ -1,26 +1,32 @@
 import { motion } from 'motion/react'
+import { FaStar, FaRegStar } from 'react-icons/fa'
+
+const FIREWORK_COLORS = ['#fbbf24', '#f59e0b', '#fb923c', '#f472b6', '#a78bfa', '#60a5fa']
 
 export default {
   id: 'fireworks',
   name: 'Fireworks',
   component: () => (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden z-0">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{
-            scale: 0,
-            opacity: 0,
-            x: Math.random() * 80 + 10 + '%',
-            y: Math.random() * 60 + 20 + '%',
-          }}
-          animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0] }}
-          transition={{ duration: 2, repeat: Infinity, delay: i * 0.8 }}
-          className="absolute text-5xl"
-        >
-          ✨
-        </motion.div>
-      ))}
-    </div>
+    <>
+      {Array.from({ length: 10 }).map((_, i) => {
+        const Icon = i % 2 === 0 ? FaStar : FaRegStar
+        return (
+          <motion.div
+            key={i}
+            initial={{ scale: 0, opacity: 0, rotate: 0 }}
+            animate={{ scale: [0, 1.4, 0], opacity: [0, 1, 0], rotate: [0, 180, 360] }}
+            transition={{ duration: 2, repeat: Infinity, delay: i * 0.5 }}
+            className="absolute"
+            style={{
+              left: `${10 + Math.random() * 75}%`,
+              top: `${15 + Math.random() * 60}%`,
+              color: FIREWORK_COLORS[i % FIREWORK_COLORS.length],
+            }}
+          >
+            <Icon size={28 + Math.random() * 16} />
+          </motion.div>
+        )
+      })}
+    </>
   ),
 }
