@@ -7,7 +7,7 @@ import { getDb, type Bindings } from './db/client'
 import { letters } from './db/schema'
 
 type AppVariables = {
-  user: { id: string; email: string; name: string; image?: string } | null
+  user: { id: string; email: string; name: string; image?: string | null } | null
 }
 
 const app = new Hono<{ Bindings: Bindings; Variables: AppVariables }>()
@@ -19,6 +19,15 @@ app.use(
     credentials: true,
   })
 )
+
+app.use('/api/*', async (context, next) => {
+  await next()
+  context.res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, private')
+  context.res.headers.set('Pragma', 'no-cache')
+  context.res.headers.set('Expires', '0')
+  context.res.headers.set('CDN-Cache-Control', 'no-store')
+  context.res.headers.set('Cloudflare-CDN-Cache-Control', 'no-store')
+})
 
 app.all('/api/auth/*', (context) => {
   const auth = createAuth(context.env)
@@ -175,7 +184,7 @@ app.patch('/api/letters/:sender/:recipient/note', async (context) => {
 
   await db
     .update(letters)
-    .set({ replyNote: note ?? null })
+    .set({ replyNote: note ?? '' })
     .where(eq(letters.id, letterRecord.id))
 
   return context.json({ ok: true })
@@ -204,7 +213,7 @@ async function runCleanup(environment: Bindings) {
 
 export default {
   fetch: app.fetch,
-  async scheduled(_event: ScheduledEvent, environment: Bindings, executionContext: ExecutionContext) {
+  async scheduled(_event: any, environment: Bindings, executionContext: any) {
     executionContext.waitUntil(runCleanup(environment))
   },
 }

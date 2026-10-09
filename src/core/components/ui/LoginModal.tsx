@@ -7,10 +7,9 @@ import { authClient } from '../../lib/auth-client'
 type LoginModalProps = {
   open: boolean
   onClose: () => void
-  onSuccess: () => void
 }
 
-export function LoginModal({ open, onClose, onSuccess }: LoginModalProps) {
+export function LoginModal({ open, onClose }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
 

@@ -1,9 +1,10 @@
 /* src/pages/Home.tsx */
 import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
+import { FaCopy, FaCheck } from 'react-icons/fa'
 import { Header, Footer, Pattern, FromTo, Message } from '../core/components/layout'
 import { Button, Card, Container, LoginModal } from '../core/components/ui'
-import { Editor } from '../letter/Editor'
+import { Editor } from '../letter/editor'
 import type { PatternId } from '../letter/patterns'
 import { authClient } from '../core/lib/auth-client'
 import { createLetter, getMe } from '../core/lib/api'
@@ -63,6 +64,7 @@ export function Home() {
   const [isCreating, setIsCreating] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [letterConfig, setLetterConfig] = useState<any>(DEFAULT_LETTER_CONFIG)
+  const [isCopied, setIsCopied] = useState(false)
 
   useEffect(() => {
     getMe()
@@ -107,14 +109,19 @@ export function Home() {
     }
   }
 
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(generatedLink)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch (error) {
+      console.error('Failed to copy:', error)
+    }
+  }
+
   const handleLogout = async () => {
     await authClient.signOut()
     setUser(null)
-  }
-
-  const handleLoginSuccess = () => {
-    getMe().then((userData) => setUser(userData))
-    setIsLoginModalOpen(false)
   }
 
   if (isLoading) {
@@ -136,7 +143,6 @@ export function Home() {
       <LoginModal
         open={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
-        onSuccess={handleLoginSuccess}
       />
 
       <main className="py-6 px-4">
@@ -176,12 +182,36 @@ export function Home() {
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl max-w-2xl mx-auto"
               >
-                <p className="text-sm text-blue-800 font-medium mb-2">
+                <p className="text-sm text-blue-800 font-medium mb-3">
                   Your link is ready
                 </p>
-                <code className="text-xs break-all block bg-white p-4 rounded-lg border border-blue-100">
-                  {generatedLink}
-                </code>
+
+                <div className="flex items-center gap-2 bg-white rounded-lg border border-blue-100 p-2">
+                  <code className="flex-1 text-xs break-all text-left px-2 py-1">
+                    {generatedLink}
+                  </code>
+
+                  <button
+                    onClick={handleCopyLink}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition flex-shrink-0 ${
+                      isCopied
+                        ? 'bg-green-500 text-white'
+                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                    }`}
+                  >
+                    {isCopied ? (
+                      <>
+                        <FaCheck />
+                        Copied!
+                      </>
+                    ) : (
+                      <>
+                        <FaCopy />
+                        Copy
+                      </>
+                    )}
+                  </button>
+                </div>
               </motion.div>
             )}
           </Card>

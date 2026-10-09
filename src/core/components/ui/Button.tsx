@@ -9,6 +9,7 @@ type ButtonProps = {
   size?: ButtonSize
   className?: string
   type?: 'button' | 'submit'
+  disabled?: boolean
 }
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
@@ -31,12 +32,14 @@ export function Button({
   size = 'md',
   className = '',
   type = 'button',
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`border font-medium transition ${BUTTON_VARIANTS[variant]} ${BUTTON_SIZES[size]} ${className}`}
+      disabled={disabled}
+      className={`border font-medium transition disabled:opacity-60 disabled:cursor-not-allowed ${BUTTON_VARIANTS[variant]} ${BUTTON_SIZES[size]} ${className}`}
     >
       {children}
     </button>

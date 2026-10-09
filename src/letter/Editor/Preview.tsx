@@ -5,10 +5,9 @@ type PreviewProps = {
   pattern: PatternId
   message: string
   config: any
-  onReply?: (reply: string, note: string) => void
 }
 
-export function Preview({ pattern, message, config, onReply }: PreviewProps) {
+export function Preview({ pattern, message, config }: PreviewProps) {
   const PatternComponent = PATTERNS[pattern]
 
   return (
@@ -19,7 +18,8 @@ export function Preview({ pattern, message, config, onReply }: PreviewProps) {
             ...config,
             message: message || 'Your beautiful letter will appear here...',
           }}
-          onReply={onReply ?? (() => {})}
+          onReply={() => {}}
+          onNote={() => {}}
           preview
         />
       </div>

@@ -21,6 +21,18 @@ export function createAuth(environment: Bindings) {
         clientSecret: environment.GOOGLE_CLIENT_SECRET,
       },
     },
+    trustedOrigins: [
+      'http://localhost:5173',
+      'https://letter.pabitramohansingh.workers.dev',
+    ],
+    advanced: {
+      defaultCookieAttributes: {
+        sameSite: 'lax',
+        secure: true,
+        httpOnly: true,
+        path: '/',
+      },
+    },
     session: {
       expiresIn: SESSION_MAX_AGE_SECONDS,
       updateAge: SESSION_UPDATE_AGE_SECONDS,

@@ -11,6 +11,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.3.3(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
+      '@zumer/snapdom':
+        specifier: ^3.3.0
+        version: 3.3.0
       better-auth:
         specifier: ^1.7.7
         version: 1.7.7(drizzle-kit@0.31.11)(drizzle-orm@0.45.3(@cloudflare/workers-types@5.20261007.1)(kysely@0.29.6))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -1384,6 +1387,9 @@ packages:
         optional: true
       oxc-transform-react:
         optional: true
+
+  '@zumer/snapdom@3.3.0':
+    resolution: {integrity: sha512-DR4HnXp5vlLDymmAE5z/QWzxtsc+wrpjo/QXvj5R377wKarwpCQO2LzUuQjWhJaMDNAyCjvxJB4EN8Zgs8Ri9w==}
 
   better-auth@1.7.7:
     resolution: {integrity: sha512-Zhgxi/c5ylmfB/sX+nwnBbsFf/j6k0L8DvL6CJXZSrXgxc5pPMC/e7j812zNd4L4B4ELmdURCPw3X8nAOUdcjw==}
@@ -2810,6 +2816,8 @@ snapshots:
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.3.3(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)
+
+  '@zumer/snapdom@3.3.0': {}
 
   better-auth@1.7.7(drizzle-kit@0.31.11)(drizzle-orm@0.45.3(@cloudflare/workers-types@5.20261007.1)(kysely@0.29.6))(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:

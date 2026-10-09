@@ -1,3 +1,4 @@
+/* src/letter/patterns/index.ts */
 import TwoChoice, { type TwoChoiceConfig } from './TwoChoice'
 import OneChoice, { type OneChoiceConfig } from './OneChoice'
 import NoteOnly, { type NoteOnlyConfig } from './NoteOnly'

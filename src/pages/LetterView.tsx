@@ -1,16 +1,16 @@
 /* src/pages/LetterView.tsx */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams } from 'react-router'
 import { FaCamera, FaDownload } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
 import { getLetter, replyLetter, saveNote } from '../core/lib/api'
-import { renderLetterToCanvas, downloadDataUrl } from '../core/lib/canvas'
+import { captureLetterAsImage, downloadDataUrl } from '../core/lib/canvas'
 import { generateStandaloneHTML } from '../core/lib/standalone-html'
 
 type ReplyState = {
   reply: string
-  note: string
+  note: string | null
 }
 
 export function LetterView() {
@@ -19,6 +19,7 @@ export function LetterView() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [replyState, setReplyState] = useState<ReplyState | null>(null)
+  const letterRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!sender || !slug) return
@@ -29,7 +30,7 @@ export function LetterView() {
         if (letterData.status === 'replied') {
           setReplyState({
             reply: letterData.reply ?? '',
-            note: letterData.replyNote ?? '',
+            note: letterData.replyNote ?? null,
           })
         }
       })
@@ -40,7 +41,7 @@ export function LetterView() {
   const handleReply = async (replyText: string) => {
     if (!sender || !slug) return
     await replyLetter(sender, slug, replyText)
-    setReplyState({ reply: replyText, note: '' })
+    setReplyState({ reply: replyText, note: null })
   }
 
   const handleNote = async (noteText: string) => {
@@ -53,17 +54,15 @@ export function LetterView() {
     )
   }
 
-  const handleSaveImage = () => {
-    if (!letter) return
+  const handleSaveImage = async () => {
+    if (!letterRef.current) return
 
-    const dataUrl = renderLetterToCanvas({
-      recipientName: letter.recipientName,
-      message: letter.message,
-      reply: replyState?.reply ?? '',
-      note: replyState?.note ?? '',
-    })
-
-    downloadDataUrl(dataUrl, `letter-${slug}.png`)
+    try {
+      const dataUrl = await captureLetterAsImage(letterRef.current)
+      downloadDataUrl(dataUrl, `letter-${slug}.png`)
+    } catch (error) {
+      console.error('Failed to capture image:', error)
+    }
   }
 
   const handleDownloadHTML = () => {
@@ -118,7 +117,9 @@ export function LetterView() {
     )
   }
 
-  const footerActions = replyState ? (
+  const isNoteSubmitted = replyState !== null && replyState.note !== null
+
+  const footerActions = isNoteSubmitted ? (
     <>
       <button
         onClick={handleSaveImage}
@@ -141,7 +142,7 @@ export function LetterView() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <div className="flex-1 flex">
+      <div ref={letterRef} className="flex-1 flex">
         <PatternComponent
           config={{
             ...letter.config,

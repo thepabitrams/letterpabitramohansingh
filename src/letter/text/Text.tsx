@@ -19,20 +19,32 @@ function renderMarkdown(rawContent: string): string {
 
 function Typewriter({ content }: { content: string }) {
   const [displayedText, setDisplayedText] = useState('')
+  const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     setDisplayedText('')
+    setIsComplete(false)
+
     let characterIndex = 0
     const typewriterTimer = setInterval(() => {
       characterIndex++
       setDisplayedText(content.slice(0, characterIndex))
-      if (characterIndex >= content.length) clearInterval(typewriterTimer)
+
+      if (characterIndex >= content.length) {
+        clearInterval(typewriterTimer)
+        setIsComplete(true)
+      }
     }, 40)
 
     return () => clearInterval(typewriterTimer)
   }, [content])
 
-  return <span dangerouslySetInnerHTML={{ __html: renderMarkdown(displayedText) }} />
+  return (
+    <span>
+      <span dangerouslySetInnerHTML={{ __html: renderMarkdown(displayedText) }} />
+      {!isComplete && <span className="animate-pulse">|</span>}
+    </span>
+  )
 }
 
 export default function Text({
@@ -55,7 +67,6 @@ export default function Text({
     return (
       <div className={appliedClassName}>
         <Typewriter content={content} />
-        <span className="animate-pulse">|</span>
       </div>
     )
   }

@@ -23,13 +23,11 @@ type OneChoiceProps = {
   config: OneChoiceConfig
   onReply: (reply: string) => void
   onNote: (note: string) => void
-  existingReply?: { reply: string; note: string } | null
+  existingReply?: { reply: string; note: string | null } | null
   senderName?: string
   recipientName?: string
   preview?: boolean
 }
-
-type OneChoiceStep = 'choice' | 'note'
 
 export default function OneChoice({
   config,
@@ -40,35 +38,28 @@ export default function OneChoice({
   recipientName,
   preview = false,
 }: OneChoiceProps) {
-  const [currentStep, setCurrentStep] = useState<OneChoiceStep>('choice')
   const [noteText, setNoteText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
-  const isReplied = !!existingReply
-  const showChoice = preview || currentStep === 'choice'
-  const showNote = preview || currentStep === 'note'
+  const hasReplied = !!existingReply
+  const isNotePending = hasReplied && existingReply.note === null
+  const isNoteSubmitted = hasReplied && existingReply.note !== null
   const replyText = existingReply?.reply ?? ''
   const replyNoteText = existingReply?.note ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
-  const handleButtonClick = async () => {
-    if (preview || isReplied) return
+  const handleChoiceClick = async () => {
+    if (preview || hasReplied) return
     setIsSaving(true)
     await onReply(config.button.text)
     setIsSaving(false)
-    setCurrentStep('note')
   }
 
-  const handleSubmit = async () => {
-    if (preview || isReplied) return
+  const handleSubmitNote = async () => {
+    if (preview || isNoteSubmitted) return
     setIsSaving(true)
     await onNote(noteText)
     setIsSaving(false)
-  }
-
-  const handleSkip = async () => {
-    if (preview || isReplied) return
-    await onNote('')
   }
 
   return (
@@ -98,7 +89,7 @@ export default function OneChoice({
           textAnimation={config.textAnimation}
         />
 
-        {showChoice && (
+        {!hasReplied && (
           <div className="flex justify-center items-center pt-2">
             <Button
               text={config.button.text}
@@ -107,12 +98,12 @@ export default function OneChoice({
               size={config.button.size as any}
               variant={config.button.variant}
               animation={config.button.animation}
-              onClick={handleButtonClick}
+              onClick={handleChoiceClick}
             />
           </div>
         )}
 
-        {showNote && !isReplied && (
+        {isNotePending && (
           <div className="space-y-3">
             <MessageBox
               content={noteText}
@@ -122,30 +113,21 @@ export default function OneChoice({
               onChange={setNoteText}
               placeholder={preview ? 'Recipient writes here...' : 'Add a note? (optional)'}
             />
-            <div className="flex gap-3 justify-center">
-              {!preview && (
-                <button
-                  onClick={handleSkip}
-                  disabled={isSaving}
-                  className="px-5 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
-                >
-                  Skip
-                </button>
-              )}
+            <div className="flex justify-center">
               <Button
-                text={isSaving ? 'Saving...' : config.submitButton.text}
+                text={isSaving ? 'Submitting...' : config.submitButton.text}
                 color={config.submitButton.color as any}
                 shape={config.submitButton.shape as any}
                 size={config.submitButton.size as any}
                 variant={config.submitButton.variant}
                 animation={config.submitButton.animation}
-                onClick={handleSubmit}
+                onClick={handleSubmitNote}
               />
             </div>
           </div>
         )}
 
-        {isReplied && (
+        {isNoteSubmitted && (
           <div className="text-center space-y-2 pt-1">
             <p className="text-xs tracking-[0.2em] text-gray-600 font-semibold">
               <span className="uppercase">{recipientName}</span> Replied{' '}

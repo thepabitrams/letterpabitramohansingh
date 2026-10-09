@@ -22,7 +22,7 @@ type NoteOnlyProps = {
   config: NoteOnlyConfig
   onReply?: (reply: string) => void
   onNote: (note: string) => void
-  existingReply?: { reply: string; note: string } | null
+  existingReply?: { reply: string; note: string | null } | null
   senderName?: string
   recipientName?: string
   preview?: boolean
@@ -39,12 +39,12 @@ export default function NoteOnly({
   const [noteText, setNoteText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
-  const isReplied = !!existingReply
+  const isNoteSubmitted = !!existingReply && existingReply.note !== null
   const replyNoteText = existingReply?.note ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
   const handleSubmit = async () => {
-    if (preview || isReplied) return
+    if (preview || isNoteSubmitted) return
     setIsSaving(true)
     await onNote(noteText)
     setIsSaving(false)
@@ -77,7 +77,7 @@ export default function NoteOnly({
           textAnimation={config.textAnimation}
         />
 
-        {!isReplied && (
+        {!isNoteSubmitted && (
           <div className="space-y-3">
             <MessageBox
               content={noteText}
@@ -89,7 +89,7 @@ export default function NoteOnly({
             />
             <div className="flex justify-center">
               <Button
-                text={isSaving ? 'Saving...' : config.submitButton.text}
+                text={isSaving ? 'Submitting...' : config.submitButton.text}
                 color={config.submitButton.color as any}
                 shape={config.submitButton.shape as any}
                 size={config.submitButton.size as any}
@@ -101,7 +101,7 @@ export default function NoteOnly({
           </div>
         )}
 
-        {isReplied && (
+        {isNoteSubmitted && (
           <div className="text-center space-y-2 pt-1">
             <p className="text-xs tracking-[0.2em] text-gray-600 font-semibold">
               <span className="uppercase">{recipientName}</span> Replied

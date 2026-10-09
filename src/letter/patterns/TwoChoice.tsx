@@ -26,13 +26,11 @@ type TwoChoiceProps = {
   config: TwoChoiceConfig
   onReply: (reply: string) => void
   onNote: (note: string) => void
-  existingReply?: { reply: string; note: string } | null
+  existingReply?: { reply: string; note: string | null } | null
   senderName?: string
   recipientName?: string
   preview?: boolean
 }
-
-type TwoChoiceStep = 'choice' | 'note'
 
 export default function TwoChoice({
   config,
@@ -43,37 +41,28 @@ export default function TwoChoice({
   recipientName,
   preview = false,
 }: TwoChoiceProps) {
-  const [currentStep, setCurrentStep] = useState<TwoChoiceStep>('choice')
-  const [selectedChoice, setSelectedChoice] = useState('')
   const [noteText, setNoteText] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
-  const isReplied = !!existingReply
-  const showChoice = preview || currentStep === 'choice'
-  const showNote = preview || currentStep === 'note'
+  const hasReplied = !!existingReply
+  const isNotePending = hasReplied && existingReply.note === null
+  const isNoteSubmitted = hasReplied && existingReply.note !== null
   const replyText = existingReply?.reply ?? ''
   const replyNoteText = existingReply?.note ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
-  const handleButtonClick = async (buttonText: string) => {
-    if (preview || isReplied) return
-    setSelectedChoice(buttonText)
+  const handleChoiceClick = async (buttonText: string) => {
+    if (preview || hasReplied) return
     setIsSaving(true)
     await onReply(buttonText)
     setIsSaving(false)
-    setCurrentStep('note')
   }
 
-  const handleSubmit = async () => {
-    if (preview || isReplied) return
+  const handleSubmitNote = async () => {
+    if (preview || isNoteSubmitted) return
     setIsSaving(true)
     await onNote(noteText)
     setIsSaving(false)
-  }
-
-  const handleSkip = async () => {
-    if (preview || isReplied) return
-    await onNote('')
   }
 
   return (
@@ -103,7 +92,7 @@ export default function TwoChoice({
           textAnimation={config.textAnimation}
         />
 
-        {showChoice && (
+        {!hasReplied && (
           <div className="flex gap-4 justify-center items-center pt-2">
             <Button
               text={config.buttons.yes.text}
@@ -112,7 +101,7 @@ export default function TwoChoice({
               size={config.buttons.yes.size as any}
               variant={config.buttons.yes.variant}
               animation={config.buttons.yes.animation}
-              onClick={() => handleButtonClick(config.buttons.yes.text)}
+              onClick={() => handleChoiceClick(config.buttons.yes.text)}
             />
             <Button
               text={config.buttons.no.text}
@@ -121,12 +110,12 @@ export default function TwoChoice({
               size={config.buttons.no.size as any}
               variant={config.buttons.no.variant}
               animation={config.buttons.no.animation}
-              onClick={() => handleButtonClick(config.buttons.no.text)}
+              onClick={() => handleChoiceClick(config.buttons.no.text)}
             />
           </div>
         )}
 
-        {showNote && !isReplied && (
+        {isNotePending && (
           <div className="space-y-3">
             <MessageBox
               content={noteText}
@@ -137,33 +126,24 @@ export default function TwoChoice({
               placeholder={
                 preview
                   ? 'Recipient writes here...'
-                  : `You chose "${selectedChoice}". Add a note? (optional)`
+                  : `You chose "${replyText}". Add a note? (optional)`
               }
             />
-            <div className="flex gap-3 justify-center">
-              {!preview && (
-                <button
-                  onClick={handleSkip}
-                  disabled={isSaving}
-                  className="px-5 py-2 text-sm text-gray-600 hover:text-gray-900 disabled:opacity-50"
-                >
-                  Skip
-                </button>
-              )}
+            <div className="flex justify-center">
               <Button
-                text={isSaving ? 'Saving...' : config.submitButton.text}
+                text={isSaving ? 'Submitting...' : config.submitButton.text}
                 color={config.submitButton.color as any}
                 shape={config.submitButton.shape as any}
                 size={config.submitButton.size as any}
                 variant={config.submitButton.variant}
                 animation={config.submitButton.animation}
-                onClick={handleSubmit}
+                onClick={handleSubmitNote}
               />
             </div>
           </div>
         )}
 
-        {isReplied && (
+        {isNoteSubmitted && (
           <div className="text-center space-y-2 pt-1">
             <p className="text-xs tracking-[0.2em] text-gray-600 font-semibold">
               <span className="uppercase">{recipientName}</span> Replied{' '}
