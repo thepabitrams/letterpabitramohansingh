@@ -182,9 +182,16 @@ app.patch('/api/letters/:sender/:recipient/note', async (context) => {
 
   if (!letterRecord) return context.json({ error: 'Not found' }, 404)
 
+  const updateData: any = { replyNote: note ?? '' }
+
+  if (letterRecord.status !== 'replied') {
+    updateData.status = 'replied'
+    updateData.repliedAt = Date.now()
+  }
+
   await db
     .update(letters)
-    .set({ replyNote: note ?? '' })
+    .set(updateData)
     .where(eq(letters.id, letterRecord.id))
 
   return context.json({ ok: true })

@@ -1,9 +1,11 @@
+/* src/letter/effect/variants/snow.tsx */
 import { motion } from 'motion/react'
 import { FaSnowflake } from 'react-icons/fa'
 
 export default {
   id: 'snow',
   name: 'Snow',
+
   component: () => (
     <>
       {Array.from({ length: 25 }).map((_, particleIndex) => (
@@ -28,4 +30,28 @@ export default {
       ))}
     </>
   ),
+
+  standalone: {
+    script: `
+      import { animate } from 'https://cdn.jsdelivr.net/npm/motion@latest/+esm';
+      const effectLayer = document.getElementById('effects');
+      for (let index = 0; index < 25; index++) {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.top = '-5%';
+        particle.style.left = Math.random() * 98 + '%';
+        particle.style.color = '#ffffff';
+        particle.style.fontSize = (14 + Math.random() * 10) + 'px';
+        particle.style.opacity = (0.7 + Math.random() * 0.3).toString();
+        particle.textContent = '\\u2744';
+        effectLayer.appendChild(particle);
+
+        animate(
+          particle,
+          { top: ['-5%', '105%'], opacity: [0, 1, 1, 0], rotate: [0, 360] },
+          { duration: 8 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 4, ease: 'linear' }
+        );
+      }
+    `,
+  },
 }

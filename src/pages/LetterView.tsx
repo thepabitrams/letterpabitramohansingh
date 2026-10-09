@@ -5,8 +5,8 @@ import { FaCamera, FaDownload } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
 import { getLetter, replyLetter, saveNote } from '../core/lib/api'
-import { captureLetterAsImage, downloadDataUrl } from '../core/lib/canvas'
-import { generateStandaloneHTML } from '../core/lib/standalone-html'
+import { generateStandaloneHTML } from '../core/lib/export/html'
+import { captureLetterAsImage, downloadDataUrl } from '../core/lib/export/image'
 
 type ReplyState = {
   reply: string
@@ -27,7 +27,7 @@ export function LetterView() {
     getLetter(sender, slug)
       .then((letterData) => {
         setLetter(letterData)
-        if (letterData.status === 'replied') {
+        if (letterData.status === 'replied' || letterData.replyNote !== null) {
           setReplyState({
             reply: letterData.reply ?? '',
             note: letterData.replyNote ?? null,
@@ -81,9 +81,6 @@ export function LetterView() {
       textAnimation: letter.config.textAnimation,
       messageBoxVariant: letter.config.messageBox.variant,
       messageBoxAnimation: letter.config.messageBox.animation,
-      buttons: letter.config.buttons,
-      button: letter.config.button,
-      submitButton: letter.config.submitButton,
     })
 
     const blob = new Blob([html], { type: 'text/html' })

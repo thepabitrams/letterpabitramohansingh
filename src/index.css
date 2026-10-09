@@ -1,2 +1,8 @@
 /* src/index.css */
 @import "tailwindcss";
+
+@theme {
+  --font-serif-elegant: 'Cormorant Garamond', Georgia, serif;
+  --font-sans-modern: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-handwritten: 'Caveat', cursive;
+}
