@@ -166,7 +166,6 @@ pnpm wrangler secret put GOOGLE_CLIENT_SECRET
 Configured in `wrangler.jsonc`:
 
 - DB – D1 database (letter-db)
-- AI – Workers AI binding
 
 ## Folder Structure
 
