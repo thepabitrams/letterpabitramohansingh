@@ -1,4 +1,4 @@
-/* src/core/lib/export/html/index.ts */
+// src/core/export/html/index.ts
 import { getBackgroundVariant, getBackgroundAnimation } from '../../../letter/background'
 import { getEffectVariant } from '../../../letter/effect'
 import { getMessageBoxVariant } from '../../../letter/message-box'

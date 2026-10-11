@@ -1,4 +1,4 @@
-/* src/letter/button/animations/shake.ts */
+// src/letter/button/animations/shake.ts 
 export default {
   id: 'shake',
   name: 'Shake',

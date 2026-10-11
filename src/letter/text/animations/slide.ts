@@ -1,4 +1,4 @@
-/* src/letter/text/animations/slide.ts */
+// src/letter/text/animations/slide.ts 
 export default {
   id: 'slide',
   name: 'Slide Up',

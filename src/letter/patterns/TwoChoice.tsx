@@ -1,4 +1,4 @@
-/* src/letter/patterns/TwoChoice.tsx */
+// src/letter/patterns/TwoChoice.tsx 
 import { useState } from 'react'
 import { Background } from '../background'
 import { Effect } from '../effect'
@@ -61,7 +61,7 @@ export default function TwoChoice({
   const isNotePending = hasReplied && existingReply.note === null
   const isNoteSubmitted = hasReplied && existingReply.note !== null
   const replyText = existingReply?.reply ?? ''
-  const replyNoteText = existingReply?.note ?? ''
+  const replyNoteText = existingReply?.note?.trim() ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
   const showChoiceButtons = !hasReplied || preview
@@ -175,7 +175,7 @@ export default function TwoChoice({
               <div
                 className={`${textVariantConfig?.bodyClass ?? 'text-base text-gray-700 leading-relaxed'} italic`}
               >
-                "{replyNoteText}"
+                &ldquo;{replyNoteText}&rdquo;
               </div>
             )}
           </div>

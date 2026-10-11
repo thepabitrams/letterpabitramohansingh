@@ -1,4 +1,4 @@
-/* src/core/components/layout/FromTo.tsx */
+// src/core/components/layout/FromTo.tsx
 import { Card, Input } from '../ui'
 
 type FromToProps = {

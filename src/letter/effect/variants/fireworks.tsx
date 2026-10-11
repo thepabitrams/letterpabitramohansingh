@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/fireworks.tsx */
+// src/letter/effect/variants/fireworks.tsx 
 import { motion } from 'motion/react'
 import { FaRegStar, FaStar } from 'react-icons/fa'
 

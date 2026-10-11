@@ -1,4 +1,4 @@
-/* src/core/lib/utils.ts */
+// src/core/lib/utils.ts 
 export const DAY_IN_MS = 86_400_000
 
 export function slugify(input: string) {

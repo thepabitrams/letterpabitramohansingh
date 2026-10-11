@@ -1,4 +1,4 @@
-/* src/core/components/ui/Card.tsx */
+// src/core/components/ui/Card.tsx 
 import { motion } from 'motion/react'
 
 type CardProps = {

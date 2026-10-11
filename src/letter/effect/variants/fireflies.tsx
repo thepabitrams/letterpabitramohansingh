@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/fireflies.tsx */
+// src/letter/effect/variants/fireflies.tsx 
 import { motion } from 'motion/react'
 
 const FIREFLY_COUNT = 18

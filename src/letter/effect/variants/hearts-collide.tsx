@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/hearts-collide.tsx */
+// src/letter/effect/variants/hearts-collide.tsx 
 import { useEffect, useRef } from 'react'
 
 const REDS = ['#ef4444', '#dc2626', '#b91c1c', '#f87171', '#fca5a5', '#e11d48', '#be123c']

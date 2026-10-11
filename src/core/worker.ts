@@ -1,4 +1,4 @@
-/* src/core/worker.ts */
+// src/core/worker.ts 
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { eq, sql } from 'drizzle-orm'

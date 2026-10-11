@@ -1,4 +1,4 @@
-/* src/letter/button/animations/blast.ts */
+// src/letter/button/animations/blast.ts 
 export default {
   id: 'blast',
   name: 'Blast',

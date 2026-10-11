@@ -1,4 +1,4 @@
-/* src/core/components/ui/TextArea.tsx */
+// src/core/components/ui/TextArea.tsx 
 type TextAreaProps = {
   label?: string
   value: string

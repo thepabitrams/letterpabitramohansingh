@@ -1,4 +1,4 @@
-/* src/letter/effect/Effect.tsx */
+// src/letter/effect/Effect.tsx 
 import { getEffectVariant } from './index'
 
 interface EffectOptions {

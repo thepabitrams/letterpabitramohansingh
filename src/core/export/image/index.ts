@@ -1,4 +1,4 @@
-/* src/core/lib/export/image/index.ts */
+// src/core/export/image/index.ts
 import { snapdom } from '@zumer/snapdom'
 
 export async function captureLetterAsImage(element: HTMLElement): Promise<string> {

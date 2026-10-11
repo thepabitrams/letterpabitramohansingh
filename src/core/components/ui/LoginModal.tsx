@@ -1,4 +1,4 @@
-/* src/core/components/ui/LoginModal.tsx */
+// src/core/components/ui/LoginModal.tsx 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { FcGoogle } from 'react-icons/fc'

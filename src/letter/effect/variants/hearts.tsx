@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/hearts.tsx */
+// src/letter/effect/variants/hearts.tsx 
 import { motion } from 'motion/react'
 import { FaHeart } from 'react-icons/fa'
 

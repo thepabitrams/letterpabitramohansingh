@@ -1,4 +1,4 @@
-/* src/core/lib/export/html/escape.ts */
+// src/core/export/html/escape.ts
 
 const HTML_ESCAPE_MAP: Record<string, string> = {
   '&': '&amp;',

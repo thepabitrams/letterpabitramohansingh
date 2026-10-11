@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/confetti.tsx */
+// src/letter/effect/variants/confetti.tsx 
 import { motion } from 'motion/react'
 
 const CONFETTI_COLORS = ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0', '#ff9ff3']

@@ -1,4 +1,4 @@
-/* src/core/lib/export/html/template.ts */
+// src/core/export/html/template.ts
 import { escapeHtml, escapeAttribute, escapeScriptLiteral, renderMarkdown } from './escape'
 
 export interface TemplateData {
@@ -46,9 +46,9 @@ export function buildTemplate(data: TemplateData): string {
         ? `<span class="uppercase">${escapeHtml(data.recipientName)}</span> Replied`
         : `<span class="uppercase">${escapeHtml(data.recipientName)}</span> Replied <span class="text-pink-600">${escapeHtml(data.reply)}</span>`
 
-    const hasNoteText = data.note !== null && data.note !== undefined && data.note.trim() !== ''
-    const noteText = hasNoteText
-      ? `<div class="${escapeAttribute(data.textClass)} italic">"${escapeHtml(data.note)}"</div>`
+    const trimmedNote = data.note?.trim() ?? ''
+    const noteText = trimmedNote
+      ? `<div class="${escapeAttribute(data.textClass)} italic">&ldquo;${escapeHtml(trimmedNote)}&rdquo;</div>`
       : ''
 
     replyBlock = `

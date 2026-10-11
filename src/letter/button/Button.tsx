@@ -1,4 +1,4 @@
-/* src/letter/button/Button.tsx */
+// src/letter/button/Button.tsx 
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { COLORS, type ColorKey } from '../tokens/colors'

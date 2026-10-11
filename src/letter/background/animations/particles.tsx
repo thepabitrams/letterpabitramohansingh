@@ -1,4 +1,4 @@
-/* src/letter/background/animations/particles.tsx */
+// src/letter/background/animations/particles.tsx 
 import { motion } from 'motion/react'
 
 const PARTICLE_COUNT = 25

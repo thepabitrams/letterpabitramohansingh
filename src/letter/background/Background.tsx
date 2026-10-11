@@ -1,4 +1,4 @@
-/* src/letter/background/Background.tsx */
+// src/letter/background/Background.tsx 
 import { useEffect, useRef } from 'react'
 import { animate } from 'motion/react'
 import { getBackgroundAnimation, getBackgroundVariant } from './index'

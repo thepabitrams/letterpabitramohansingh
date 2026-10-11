@@ -1,39 +1,42 @@
-/* src/core/components/layout/Footer.tsx */
-import { FaCoffee, FaGithub } from 'react-icons/fa'
+// src/core/components/layout/Footer.tsx
+import { FaCoffee } from 'react-icons/fa'
 
-type FooterProps = {
+interface FooterProps {
   actions?: React.ReactNode
 }
 
-export function Footer({ actions }: FooterProps) {
+export function Footer({ actions }: FooterProps): React.ReactElement {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="bg-white border-t border-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-3">
-        <div className="flex items-center gap-4">
-          <a
-            href="https://buymeacoffee.com/pabitramohansingh"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
-          >
-            <FaCoffee />
-            Buy me a coffee
-          </a>
-          <a
-            href="https://github.com/thepabitrams"
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition"
-          >
-            <FaGithub />
-            GitHub
-          </a>
-        </div>
+        <a
+          href="https://buymeacoffee.com/pabitramohansingh"
+          target="_blank"
+          rel="noreferrer noopener"
+          aria-label="Buy me a coffee (opens in new tab)"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FFDD00] text-black text-sm font-semibold shadow-sm hover:bg-[#FFE733] hover:shadow-md transition-all"
+        >
+          <FaCoffee size={16} aria-hidden="true" />
+          <span>Buy me a coffee</span>
+        </a>
 
         <div className="flex items-center gap-4">
-          {actions}
+          {actions && (
+            <>
+              <nav
+                aria-label="Page actions"
+                className="flex items-center gap-2"
+              >
+                {actions}
+              </nav>
+              <div className="w-px h-5 bg-gray-200" aria-hidden="true" />
+            </>
+          )}
+
           <p className="text-xs text-gray-400">
-            © {new Date().getFullYear()} Pabitra Mohan Singh
+            © {currentYear} Pabitra Mohan Singh
           </p>
         </div>
       </div>

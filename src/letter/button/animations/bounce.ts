@@ -1,4 +1,4 @@
-/* src/letter/button/animations/bounce.ts */
+// src/letter/button/animations/bounce.ts 
 export default {
   id: 'bounce',
   name: 'Bounce',

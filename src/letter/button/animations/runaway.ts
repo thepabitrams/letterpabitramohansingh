@@ -1,4 +1,4 @@
-/* src/letter/button/animations/runaway.ts */
+// src/letter/button/animations/runaway.ts 
 export default {
   id: 'runaway',
   name: 'Run Away',

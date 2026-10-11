@@ -1,4 +1,4 @@
-/* src/letter/text/variants/modern.ts */
+// src/letter/text/variants/modern.ts 
 export default {
   id: 'modern',
   name: 'Modern',

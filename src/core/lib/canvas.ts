@@ -1,4 +1,4 @@
-/* src/core/lib/canvas.ts */
+// src/core/lib/canvas.ts 
 import { snapdom } from '@zumer/snapdom'
 
 export async function captureLetterAsImage(element: HTMLElement): Promise<string> {

@@ -1,4 +1,4 @@
-/* src/letter/background/animations/static.ts */
+// src/letter/background/animations/static.ts 
 export default {
   id: 'static',
   name: 'Static',

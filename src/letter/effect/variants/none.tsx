@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/none.tsx */
+// src/letter/effect/variants/none.tsx 
 export default {
   id: 'none',
   name: 'None',

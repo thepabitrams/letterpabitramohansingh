@@ -1,4 +1,4 @@
-/* src/letter/text/Text.tsx */
+// src/letter/text/Text.tsx 
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { getTextAnimation, getTextVariant } from './index'

@@ -1,4 +1,4 @@
-/* src/letter/text/variants/handwritten.ts */
+// src/letter/text/variants/handwritten.ts 
 export default {
   id: 'handwritten',
   name: 'Handwritten',

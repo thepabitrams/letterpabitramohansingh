@@ -1,4 +1,4 @@
-/* src/core/lib/standalone-html.ts */
+// src/core/lib/standalone-html.ts 
 
 import { getBackgroundVariant } from '../../letter/background'
 import { getMessageBoxVariant, MESSAGE_BOX_ANIMATIONS } from '../../letter/message-box'

@@ -1,4 +1,4 @@
-/* src/core/lib/api.ts */
+// src/core/lib/api.ts 
 
 type CreateLetterPayload = {
   senderName: string

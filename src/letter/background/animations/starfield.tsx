@@ -1,4 +1,4 @@
-/* src/letter/background/animations/starfield.tsx */
+// src/letter/background/animations/starfield.tsx 
 import { motion } from 'motion/react'
 
 const STAR_COUNT = 60

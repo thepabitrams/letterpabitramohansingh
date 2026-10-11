@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/butterflies.tsx */
+// src/letter/effect/variants/butterflies.tsx 
 import { motion } from 'motion/react'
 
 const BUTTERFLY_COUNT = 6

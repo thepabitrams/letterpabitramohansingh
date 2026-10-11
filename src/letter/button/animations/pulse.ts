@@ -1,4 +1,4 @@
-/* src/letter/button/animations/pulse.ts */
+// src/letter/button/animations/pulse.ts 
 export default {
   id: 'pulse',
   name: 'Pulse',

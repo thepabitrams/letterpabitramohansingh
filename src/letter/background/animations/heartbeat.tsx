@@ -1,4 +1,4 @@
-/* src/letter/background/animations/heartbeat.tsx */
+// src/letter/background/animations/heartbeat.tsx 
 import { motion, useAnimationControls } from 'motion/react'
 import { useEffect } from 'react'
 

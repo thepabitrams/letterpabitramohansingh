@@ -1,4 +1,4 @@
-/* src/letter/background/animations/ripples.tsx */
+// src/letter/background/animations/ripples.tsx 
 import { motion } from 'motion/react'
 import { useEffect, useState } from 'react'
 

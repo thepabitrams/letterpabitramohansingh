@@ -1,4 +1,4 @@
-/* src/core/components/layout/Message.tsx */
+// src/core/components/layout/Message.tsx 
 import { Card, TextArea } from '../ui'
 
 type MessageProps = {

@@ -1,4 +1,4 @@
-/* src/letter/background/animations/floating-shapes.tsx */
+// src/letter/background/animations/floating-shapes.tsx 
 import { motion } from 'motion/react'
 
 const SHAPES = [

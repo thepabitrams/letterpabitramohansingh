@@ -1,4 +1,4 @@
-/* src/letter/button/animations/glow.ts */
+// src/letter/button/animations/glow.ts 
 export default {
   id: 'glow',
   name: 'Glow',

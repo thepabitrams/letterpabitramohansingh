@@ -1,4 +1,4 @@
-/* src/letter/button/animations/none.ts */
+// src/letter/button/animations/none.ts 
 export default {
   id: 'none',
   name: 'None',

@@ -1,4 +1,4 @@
-/* src/core/components/layout/Header.tsx */
+// src/core/components/layout/Header.tsx 
 type HeaderProps = {
   user: { name: string; image?: string } | null
   onLoginClick: () => void

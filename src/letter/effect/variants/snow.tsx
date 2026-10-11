@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/snow.tsx */
+// src/letter/effect/variants/snow.tsx 
 import { motion } from 'motion/react'
 import { FaSnowflake } from 'react-icons/fa'
 

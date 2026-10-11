@@ -1,4 +1,4 @@
-/* src/letter/message-box/MessageBox.tsx */
+// src/letter/message-box/MessageBox.tsx 
 import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { Text } from '../text'

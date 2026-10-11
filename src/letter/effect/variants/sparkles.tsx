@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/sparkles.tsx */
+// src/letter/effect/variants/sparkles.tsx 
 import { motion } from 'motion/react'
 
 const SPARKLE_COUNT = 25

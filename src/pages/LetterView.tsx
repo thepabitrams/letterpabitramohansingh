@@ -1,7 +1,7 @@
-/* src/pages/LetterView.tsx */
+// src/pages/LetterView.tsx 
 import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { useParams } from 'react-router'
-import { FaCamera, FaDownload } from 'react-icons/fa'
+import { FaHtml5, FaImage } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
 import { getLetter, replyLetter, saveNote } from '../core/lib/api'
@@ -179,18 +179,20 @@ export function LetterView() {
       <button
         type="button"
         onClick={handleSaveImage}
-        className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
+        aria-label="Save letter as image"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition"
       >
-        <FaCamera />
-        Save as Image
+        <FaImage size={14} aria-hidden="true" />
+        <span>Save as Image</span>
       </button>
       <button
         type="button"
         onClick={handleDownloadHTML}
-        className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
+        aria-label="Download letter as HTML"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition"
       >
-        <FaDownload />
-        Download HTML
+        <FaHtml5 size={14} aria-hidden="true" />
+        <span>Download HTML</span>
       </button>
     </>
   ) : null

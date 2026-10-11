@@ -1,4 +1,4 @@
-/* src/core/components/ui/Input.tsx */
+// src/core/components/ui/Input.tsx 
 type InputProps = {
   label?: string
   value: string

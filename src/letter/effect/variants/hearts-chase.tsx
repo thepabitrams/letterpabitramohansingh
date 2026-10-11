@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/hearts-chase.tsx */
+// src/letter/effect/variants/hearts-chase.tsx 
 import { useEffect, useRef, type CSSProperties } from 'react'
 
 interface HeartsChaseProps {

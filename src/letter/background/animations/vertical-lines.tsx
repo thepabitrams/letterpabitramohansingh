@@ -1,4 +1,4 @@
-/* src/letter/background/animations/vertical-lines.tsx */
+// src/letter/background/animations/vertical-lines.tsx 
 import { motion } from 'motion/react'
 
 const LINE_COUNT = 15

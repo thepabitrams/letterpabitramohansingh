@@ -1,4 +1,4 @@
-/* src/pages/Home.tsx */
+// src/pages/Home.tsx 
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { FaCheck, FaCopy } from 'react-icons/fa'

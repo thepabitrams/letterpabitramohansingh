@@ -1,4 +1,4 @@
-/* src/core/components/ui/Button.tsx */
+// src/core/components/ui/Button.tsx 
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'active'
 type ButtonSize = 'sm' | 'md' | 'lg'
 

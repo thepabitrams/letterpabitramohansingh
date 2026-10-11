@@ -1,4 +1,4 @@
-/* src/letter/text/animations/fade.ts */
+// src/letter/text/animations/fade.ts 
 export default {
   id: 'fade',
   name: 'Fade In',

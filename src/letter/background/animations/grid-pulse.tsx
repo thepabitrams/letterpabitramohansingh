@@ -1,4 +1,4 @@
-/* src/letter/background/animations/grid-pulse.tsx */
+// src/letter/background/animations/grid-pulse.tsx 
 import { motion } from 'motion/react'
 
 const GRID_SIZE = 22

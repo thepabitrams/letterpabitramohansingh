@@ -1,4 +1,4 @@
-/* src/letter/text/variants/romantic.ts */
+// src/letter/text/variants/romantic.ts 
 export default {
   id: 'romantic',
   name: 'Romantic',

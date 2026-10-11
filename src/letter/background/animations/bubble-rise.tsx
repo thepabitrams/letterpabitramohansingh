@@ -1,4 +1,4 @@
-/* src/letter/background/animations/bubble-rise.tsx */
+// src/letter/background/animations/bubble-rise.tsx 
 import { motion } from 'motion/react'
 
 const BUBBLE_COUNT = 25

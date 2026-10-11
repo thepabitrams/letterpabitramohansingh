@@ -1,4 +1,4 @@
-/* src/core/components/layout/index.ts */
+// src/core/components/layout/index.ts 
 export { Header } from './Header'
 export { Footer } from './Footer'
 export { FromTo } from './FromTo'

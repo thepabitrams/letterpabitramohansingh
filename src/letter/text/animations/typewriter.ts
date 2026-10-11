@@ -1,4 +1,4 @@
-/* src/letter/text/animations/typewriter.ts */
+// src/letter/text/animations/typewriter.ts 
 export default {
   id: 'typewriter',
   name: 'Typewriter',

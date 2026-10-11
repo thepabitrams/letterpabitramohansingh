@@ -1,4 +1,4 @@
-/* src/core/auth.ts */
+// src/core/auth.ts 
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { getDb, type Bindings } from '../db/client'

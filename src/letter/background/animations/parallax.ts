@@ -1,4 +1,4 @@
-/* src/letter/background/animations/parallax.ts */
+// src/letter/background/animations/parallax.ts 
 export default {
   id: 'parallax',
   name: 'Parallax',

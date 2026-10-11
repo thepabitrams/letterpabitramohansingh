@@ -1,4 +1,4 @@
-/* src/letter/effect/variants/petals.tsx */
+// src/letter/effect/variants/petals.tsx 
 import { motion } from 'motion/react'
 
 const PETAL_COUNT = 18
