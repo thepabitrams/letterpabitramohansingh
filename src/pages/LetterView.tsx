@@ -1,4 +1,4 @@
-// src/pages/LetterView.tsx 
+// src/pages/LetterView.tsx
 import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { useParams } from 'react-router'
 import { FaHtml5, FaImage } from 'react-icons/fa'
@@ -180,7 +180,7 @@ export function LetterView() {
         type="button"
         onClick={handleSaveImage}
         aria-label="Save letter as image"
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition whitespace-nowrap"
       >
         <FaImage size={14} aria-hidden="true" />
         <span>Save as Image</span>
@@ -189,7 +189,7 @@ export function LetterView() {
         type="button"
         onClick={handleDownloadHTML}
         aria-label="Download letter as HTML"
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition whitespace-nowrap"
       >
         <FaHtml5 size={14} aria-hidden="true" />
         <span>Download HTML</span>
