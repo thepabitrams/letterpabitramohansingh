@@ -23,6 +23,6 @@
     "crons": ["0 3 * * *"]
   },
   "vars": {
-    "BETTER_AUTH_URL": "https://letter.pabitramohansingh.workers.dev"
+    "BETTER_AUTH_URL": "https://letter.pabitramohansingh.com"
   }
 }
