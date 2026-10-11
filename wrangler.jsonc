@@ -16,7 +16,9 @@
     {
       "binding": "DB",
       "database_name": "letter-db",
-      "database_id": "eb50390f-c5c1-4c48-ade0-8fb82c77ee6e"
+      "database_id": "eb50390f-c5c1-4c48-ade0-8fb82c77ee6e",
+      "migrations_dir": "migrations",
+      "migrations_pattern": "migrations/*/migration.sql"
     }
   ],
   "triggers": {
