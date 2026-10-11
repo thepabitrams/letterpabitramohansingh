@@ -9,9 +9,13 @@ export async function captureLetterAsImage(element: HTMLElement): Promise<string
   return imageElement.src
 }
 
-export function downloadDataUrl(dataUrl: string, fileName: string) {
+export function downloadDataUrl(dataUrl: string, fileName: string): void {
   const downloadLink = document.createElement('a')
   downloadLink.href = dataUrl
   downloadLink.download = fileName
+  downloadLink.style.display = 'none'
+
+  document.body.appendChild(downloadLink)
   downloadLink.click()
+  document.body.removeChild(downloadLink)
 }

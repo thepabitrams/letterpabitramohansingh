@@ -1,9 +1,11 @@
 /* src/core/lib/export/html/template.ts */
-import { escapeHtml, renderMarkdown } from './escape'
+import { escapeHtml, escapeAttribute, escapeScriptLiteral, renderMarkdown } from './escape'
 
-export type TemplateData = {
+export interface TemplateData {
   senderName: string
   recipientName: string
+  effectSenderName: string
+  effectRecipientName: string
   message: string
   reply: string
   note: string
@@ -24,7 +26,7 @@ export function buildTemplate(data: TemplateData): string {
   const fontLink = data.fontUrl
     ? `<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="${data.fontUrl}" rel="stylesheet">`
+<link href="${escapeAttribute(data.fontUrl)}" rel="stylesheet">`
     : ''
 
   const senderLine = data.senderName
@@ -32,10 +34,10 @@ export function buildTemplate(data: TemplateData): string {
     : ''
 
   const messageBody = data.isTypewriter
-    ? `<div class="${data.textClass}"><span id="message" data-full-text="${escapeHtml(data.message)}"></span><span class="cursor-blink">|</span></div>`
-    : `<div data-motion-text class="${data.textClass}">${renderMarkdown(data.message)}</div>`
+    ? `<div class="${escapeAttribute(data.textClass)}"><span id="message" data-full-text="${escapeAttribute(data.message)}"></span><span class="cursor-blink">|</span></div>`
+    : `<div data-motion-text class="${escapeAttribute(data.textClass)}">${renderMarkdown(data.message)}</div>`
 
-  const messageBlock = `<div class="${data.messageBoxClass} px-6 py-5 rounded-2xl w-full">${messageBody}</div>`
+  const messageBlock = `<div class="${escapeAttribute(data.messageBoxClass)} px-6 py-5 rounded-2xl w-full">${messageBody}</div>`
 
   let replyBlock = ''
   if (data.isNoteSubmitted) {
@@ -44,9 +46,9 @@ export function buildTemplate(data: TemplateData): string {
         ? `<span class="uppercase">${escapeHtml(data.recipientName)}</span> Replied`
         : `<span class="uppercase">${escapeHtml(data.recipientName)}</span> Replied <span class="text-pink-600">${escapeHtml(data.reply)}</span>`
 
-    const hasNoteText = data.note && data.note.trim() !== ''
+    const hasNoteText = data.note !== null && data.note !== undefined && data.note.trim() !== ''
     const noteText = hasNoteText
-      ? `<div class="${data.textClass} italic">"${escapeHtml(data.note)}"</div>`
+      ? `<div class="${escapeAttribute(data.textClass)} italic">"${escapeHtml(data.note)}"</div>`
       : ''
 
     replyBlock = `
@@ -57,15 +59,15 @@ export function buildTemplate(data: TemplateData): string {
     `
   }
 
-  const senderForScript = (data.senderName || 'ME').replace(/\\/g, '\\\\').replace(/'/g, "\\'")
-  const recipientForScript = (data.recipientName || 'YOU').replace(/\\/g, '\\\\').replace(/'/g, "\\'")
+  const senderForScript = escapeScriptLiteral(data.effectSenderName ?? 'ME')
+  const recipientForScript = escapeScriptLiteral(data.effectRecipientName ?? 'YOU')
 
   const allScripts = [
     data.effectScript,
     data.backgroundAnimationScript,
     data.textAnimationScript,
   ]
-    .filter((script) => script && script.trim())
+    .filter((script) => script !== null && script !== undefined && script.trim() !== '')
     .map((script) =>
       script
         .replace(/__SENDER__/g, senderForScript)
@@ -93,7 +95,7 @@ ${data.fontFamilyCss}
 </style>
 </head>
 <body>
-  <div data-background class="relative w-full min-h-screen ${data.backgroundClass} flex items-center justify-center p-6 overflow-hidden">
+  <div data-background class="relative w-full min-h-screen ${escapeAttribute(data.backgroundClass)} flex items-center justify-center p-6 overflow-hidden">
     <div class="absolute inset-0 z-30 pointer-events-none" id="effects"></div>
     <div class="relative z-10 max-w-md w-full space-y-4">
       ${senderLine}

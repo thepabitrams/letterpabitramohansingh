@@ -5,7 +5,13 @@ import { getMessageBoxVariant } from '../../../../letter/message-box'
 import { getTextVariant, getTextAnimation } from '../../../../letter/text'
 import { buildTemplate } from './template'
 
-export type LetterExportData = {
+interface EffectOptions {
+  senderLabel?: string
+  recipientLabel?: string
+  hideLabels?: string
+}
+
+export interface LetterExportData {
   senderName: string
   recipientName: string
   message: string
@@ -15,6 +21,7 @@ export type LetterExportData = {
   background: string
   backgroundAnimation?: string
   effect: string
+  effectOptions?: EffectOptions
   textVariant: string
   textAnimation: string
   messageBoxVariant: string
@@ -43,9 +50,20 @@ export function generateStandaloneHTML(letterData: LetterExportData): string {
 
   const isTypewriter = letterData.textAnimation === 'typewriter'
 
+  const hideLabels = letterData.effectOptions?.hideLabels === 'true'
+
+  const resolvedSenderName = hideLabels
+    ? ''
+    : letterData.effectOptions?.senderLabel || letterData.senderName
+  const resolvedRecipientName = hideLabels
+    ? ''
+    : letterData.effectOptions?.recipientLabel || letterData.recipientName
+
   return buildTemplate({
     senderName: letterData.senderName,
     recipientName: letterData.recipientName,
+    effectSenderName: resolvedSenderName,
+    effectRecipientName: resolvedRecipientName,
     message: letterData.message,
     reply: letterData.reply,
     note: letterData.note,

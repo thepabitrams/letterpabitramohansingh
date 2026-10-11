@@ -1,15 +1,51 @@
 /* src/pages/Home.tsx */
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { FaCopy, FaCheck } from 'react-icons/fa'
-import { Header, Footer, Pattern, FromTo, Message } from '../core/components/layout'
+import { FaCheck, FaCopy } from 'react-icons/fa'
+import { Footer, FromTo, Header, Message, Pattern } from '../core/components/layout'
 import { Button, Card, Container, LoginModal } from '../core/components/ui'
 import { Editor } from '../letter/editor'
 import type { PatternId } from '../letter/patterns'
 import { authClient } from '../core/lib/auth-client'
 import { createLetter, getMe } from '../core/lib/api'
 
-const DEFAULT_LETTER_CONFIG = {
+interface User {
+  id: string
+  name: string
+  email: string
+  image?: string | undefined
+}
+
+interface ButtonConfig {
+  text: string
+  color: string
+  shape: string
+  size: string
+  variant: string
+  animation: string
+}
+
+interface EffectOptions {
+  senderLabel?: string
+  recipientLabel?: string
+  hideLabels?: string
+}
+
+interface LetterConfig {
+  background: string
+  backgroundAnimation: string
+  effect: string
+  effectOptions?: EffectOptions
+  textVariant: string
+  textAnimation: string
+  messageBox: { variant: string; animation: string }
+  header: { enabled: boolean; text: string; variant: string; animation: string }
+  buttons: { yes: ButtonConfig; no: ButtonConfig }
+  button: ButtonConfig
+  submitButton: ButtonConfig
+}
+
+const DEFAULT_LETTER_CONFIG: LetterConfig = {
   background: 'blue',
   backgroundAnimation: '',
   effect: '',
@@ -18,43 +54,40 @@ const DEFAULT_LETTER_CONFIG = {
   messageBox: { variant: 'romantic', animation: '' },
   header: { enabled: false, text: '', variant: 'romantic', animation: '' },
   buttons: {
-    yes: {
-      text: 'Yes',
-      color: 'green',
-      shape: 'pill',
-      size: 'md',
-      variant: 'solid',
-      animation: '',
-    },
-    no: {
-      text: 'No',
-      color: 'gray',
-      shape: 'pill',
-      size: 'md',
-      variant: 'solid',
-      animation: '',
-    },
+    yes: { text: 'Yes', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: '' },
+    no: { text: 'No', color: 'gray', shape: 'pill', size: 'md', variant: 'solid', animation: '' },
   },
-  button: {
-    text: 'Accept',
-    color: 'green',
-    shape: 'pill',
-    size: 'md',
-    variant: 'solid',
-    animation: '',
-  },
-  submitButton: {
-    text: 'Submit',
-    color: 'blue',
-    shape: 'rounded',
-    size: 'md',
-    variant: 'solid',
-    animation: '',
-  },
+  button: { text: 'Accept', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: '' },
+  submitButton: { text: 'Submit', color: 'blue', shape: 'rounded', size: 'md', variant: 'solid', animation: '' },
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message
+  return 'Something went wrong'
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function normalizeUser(value: unknown): User | null {
+  if (!isRecord(value)) return null
+  if (typeof value.id !== 'string') return null
+  if (typeof value.name !== 'string') return null
+  if (typeof value.email !== 'string') return null
+
+  const image = typeof value.image === 'string' ? value.image : undefined
+
+  return {
+    id: value.id,
+    name: value.name,
+    email: value.email,
+    image,
+  }
 }
 
 export function Home() {
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [pattern, setPattern] = useState<PatternId>('two-choice')
@@ -64,20 +97,30 @@ export function Home() {
   const [generatedLink, setGeneratedLink] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
-  const [letterConfig, setLetterConfig] = useState<any>(DEFAULT_LETTER_CONFIG)
+  const [letterConfig, setLetterConfig] = useState<LetterConfig>(DEFAULT_LETTER_CONFIG)
   const [isCopied, setIsCopied] = useState(false)
 
   useEffect(() => {
+    let isCancelled = false
+
     getMe()
-      .then((userData) => setUser(userData))
-      .finally(() => setIsLoading(false))
+      .then((userData) => {
+        if (!isCancelled) setUser(normalizeUser(userData))
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false)
+      })
+
+    return () => {
+      isCancelled = true
+    }
   }, [])
 
-  const handleConfigUpdate = (key: string, value: any) => {
-    setLetterConfig({ ...letterConfig, [key]: value })
+  const handleConfigUpdate = (key: string, value: unknown) => {
+    setLetterConfig((previousConfig) => ({ ...previousConfig, [key]: value }))
   }
 
-  const handleGenerateLink = async () => {
+  const handleGenerateLink = async (): Promise<void> => {
     if (!user) {
       setIsLoginModalOpen(true)
       return
@@ -89,6 +132,7 @@ export function Home() {
     }
 
     setErrorMessage('')
+    setGeneratedLink('')
     setIsCreating(true)
 
     try {
@@ -103,24 +147,24 @@ export function Home() {
       })
 
       setGeneratedLink(`${window.location.origin}${result.url}`)
-    } catch (error: any) {
-      setErrorMessage(error.message ?? 'Something went wrong')
+    } catch (error: unknown) {
+      setErrorMessage(getErrorMessage(error))
     } finally {
       setIsCreating(false)
     }
   }
 
-  const handleCopyLink = async () => {
+  const handleCopyLink = async (): Promise<void> => {
     try {
       await navigator.clipboard.writeText(generatedLink)
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to copy:', error)
     }
   }
 
-  const handleLogout = async () => {
+  const handleLogout = async (): Promise<void> => {
     await authClient.signOut()
     setUser(null)
   }
@@ -193,8 +237,9 @@ export function Home() {
                   </code>
 
                   <button
+                    type="button"
                     onClick={handleCopyLink}
-                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition flex-shrink-0 ${
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md text-xs font-semibold transition shrink-0 ${
                       isCopied
                         ? 'bg-green-500 text-white'
                         : 'bg-blue-600 text-white hover:bg-blue-700'

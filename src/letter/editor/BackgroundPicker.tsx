@@ -2,7 +2,7 @@
 import { Accordion, Button } from '../../core/components/ui'
 import { BACKGROUND_VARIANTS, BACKGROUND_ANIMATIONS } from '../background'
 
-type BackgroundPickerProps = {
+interface BackgroundPickerProps {
   variant: string
   animation: string
   onVariantChange: (newVariant: string) => void
@@ -15,21 +15,19 @@ export function BackgroundPicker({
   onVariantChange,
   onAnimationChange,
 }: BackgroundPickerProps) {
-  const currentVariant = BACKGROUND_VARIANTS.find((variantEntry) => variantEntry.id === variant)
+  const currentVariant = BACKGROUND_VARIANTS.find((entry) => entry.id === variant)
 
   const visibleAnimations = BACKGROUND_ANIMATIONS.filter(
-    (animationEntry) => animationEntry.id !== 'static' && animationEntry.id !== 'none'
+    (entry) => entry.id !== 'static' && entry.id !== 'none'
   )
 
-  const currentAnimation = visibleAnimations.find(
-    (animationEntry) => animationEntry.id === animation
-  )
+  const currentAnimation = visibleAnimations.find((entry) => entry.id === animation)
 
   const subtitle = currentAnimation
     ? `${currentVariant?.config?.name ?? variant} · ${currentAnimation.config?.name ?? animation}`
     : `${currentVariant?.config?.name ?? variant}`
 
-  const handleAnimationClick = (animationId: string) => {
+  const handleAnimationClick = (animationId: string): void => {
     const isCurrentlySelected = animation === animationId
     onAnimationChange(isCurrentlySelected ? 'none' : animationId)
   }
@@ -42,13 +40,13 @@ export function BackgroundPicker({
             Color
           </h3>
           <div className="flex flex-wrap gap-2">
-            {BACKGROUND_VARIANTS.map((variantEntry) => (
+            {BACKGROUND_VARIANTS.map((entry) => (
               <Button
-                key={variantEntry.id}
-                onClick={() => onVariantChange(variantEntry.id)}
-                variant={variant === variantEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => onVariantChange(entry.id)}
+                variant={variant === entry.id ? 'active' : 'outline'}
               >
-                {variantEntry.config?.name ?? variantEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>
@@ -59,13 +57,13 @@ export function BackgroundPicker({
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">
-            {visibleAnimations.map((animationEntry) => (
+            {visibleAnimations.map((entry) => (
               <Button
-                key={animationEntry.id}
-                onClick={() => handleAnimationClick(animationEntry.id)}
-                variant={animation === animationEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => handleAnimationClick(entry.id)}
+                variant={animation === entry.id ? 'active' : 'outline'}
               >
-                {animationEntry.config?.name ?? animationEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>

@@ -2,7 +2,7 @@
 import { Accordion, Button } from '../../core/components/ui'
 import { TEXT_VARIANTS, TEXT_ANIMATIONS } from '../text'
 
-type TextPickerProps = {
+interface TextPickerProps {
   variant: string
   animation: string
   onVariantChange: (newVariant: string) => void
@@ -16,7 +16,7 @@ export function TextPicker({
   onAnimationChange,
 }: TextPickerProps) {
   const variantName =
-    TEXT_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ?? ''
+    TEXT_VARIANTS.find((entry) => entry.id === variant)?.config?.name ?? ''
 
   const visibleAnimations = TEXT_ANIMATIONS.filter((entry) => entry.id !== 'none')
   const currentAnimation = visibleAnimations.find((entry) => entry.id === animation)
@@ -25,7 +25,7 @@ export function TextPicker({
     ? `${variantName} · ${currentAnimation.config?.name ?? ''}`
     : variantName
 
-  const handleAnimationClick = (id: string) => {
+  const handleAnimationClick = (id: string): void => {
     onAnimationChange(animation === id ? '' : id)
   }
 
@@ -37,13 +37,13 @@ export function TextPicker({
             Style
           </h3>
           <div className="flex flex-wrap gap-2">
-            {TEXT_VARIANTS.map((variantEntry) => (
+            {TEXT_VARIANTS.map((entry) => (
               <Button
-                key={variantEntry.id}
-                onClick={() => onVariantChange(variantEntry.id)}
-                variant={variant === variantEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => onVariantChange(entry.id)}
+                variant={variant === entry.id ? 'active' : 'outline'}
               >
-                {variantEntry.config?.name ?? variantEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>
@@ -54,13 +54,13 @@ export function TextPicker({
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">
-            {visibleAnimations.map((animationEntry) => (
+            {visibleAnimations.map((entry) => (
               <Button
-                key={animationEntry.id}
-                onClick={() => handleAnimationClick(animationEntry.id)}
-                variant={animation === animationEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => handleAnimationClick(entry.id)}
+                variant={animation === entry.id ? 'active' : 'outline'}
               >
-                {animationEntry.config?.name ?? animationEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>

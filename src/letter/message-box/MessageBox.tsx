@@ -1,16 +1,17 @@
 /* src/letter/message-box/MessageBox.tsx */
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { motion } from 'motion/react'
 import { Text } from '../text'
-import { getMessageBoxVariant, getMessageBoxAnimation } from './index'
+import { getMessageBoxAnimation, getMessageBoxVariant } from './index'
 
-type MessageBoxProps = {
+interface MessageBoxProps {
   content: string
   variant?: string
   animation?: string
   textVariant?: string
   textAnimation?: string
   editable?: boolean
+  readOnly?: boolean
   onChange?: (value: string) => void
   placeholder?: string
 }
@@ -22,6 +23,7 @@ export default function MessageBox({
   textVariant = 'romantic',
   textAnimation = '',
   editable = false,
+  readOnly = false,
   onChange,
   placeholder = 'Write your message...',
 }: MessageBoxProps) {
@@ -49,9 +51,12 @@ export default function MessageBox({
           ref={textareaRef}
           value={content}
           onChange={(event) => onChange?.(event.target.value)}
+          readOnly={readOnly}
           placeholder={placeholder}
           rows={2}
-          className="w-full bg-transparent border-none outline-none resize-none text-gray-800 placeholder-gray-400 text-base leading-relaxed md:min-h-[96px] min-h-[64px]"
+          className={`w-full bg-transparent border-none outline-none resize-none text-gray-800 placeholder-gray-400 text-base leading-relaxed min-h-16 md:min-h-24 ${
+            readOnly ? 'cursor-default' : ''
+          }`}
         />
       </motion.div>
     )
@@ -65,12 +70,7 @@ export default function MessageBox({
       transition={animationConfig?.variants?.transition ?? {}}
       className={`${variantConfig?.className ?? ''} px-6 py-5 rounded-2xl w-full`}
     >
-      <Text
-        content={content}
-        variant={textVariant}
-        animation={textAnimation}
-        as="body"
-      />
+      <Text content={content} variant={textVariant} animation={textAnimation} as="body" />
     </motion.div>
   )
 }

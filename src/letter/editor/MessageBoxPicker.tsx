@@ -2,7 +2,7 @@
 import { Accordion, Button } from '../../core/components/ui'
 import { MESSAGE_BOX_VARIANTS, MESSAGE_BOX_ANIMATIONS } from '../message-box'
 
-type MessageBoxPickerProps = {
+interface MessageBoxPickerProps {
   variant: string
   animation: string
   onVariantChange: (newVariant: string) => void
@@ -16,7 +16,7 @@ export function MessageBoxPicker({
   onAnimationChange,
 }: MessageBoxPickerProps) {
   const variantName =
-    MESSAGE_BOX_VARIANTS.find((variantEntry) => variantEntry.id === variant)?.config?.name ?? ''
+    MESSAGE_BOX_VARIANTS.find((entry) => entry.id === variant)?.config?.name ?? ''
 
   const visibleAnimations = MESSAGE_BOX_ANIMATIONS.filter((entry) => entry.id !== 'none')
   const currentAnimation = visibleAnimations.find((entry) => entry.id === animation)
@@ -25,7 +25,7 @@ export function MessageBoxPicker({
     ? `${variantName} · ${currentAnimation.config?.name ?? ''}`
     : variantName
 
-  const handleAnimationClick = (id: string) => {
+  const handleAnimationClick = (id: string): void => {
     onAnimationChange(animation === id ? '' : id)
   }
 
@@ -37,13 +37,13 @@ export function MessageBoxPicker({
             Style
           </h3>
           <div className="flex flex-wrap gap-2">
-            {MESSAGE_BOX_VARIANTS.map((variantEntry) => (
+            {MESSAGE_BOX_VARIANTS.map((entry) => (
               <Button
-                key={variantEntry.id}
-                onClick={() => onVariantChange(variantEntry.id)}
-                variant={variant === variantEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => onVariantChange(entry.id)}
+                variant={variant === entry.id ? 'active' : 'outline'}
               >
-                {variantEntry.config?.name ?? variantEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>
@@ -53,13 +53,13 @@ export function MessageBoxPicker({
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">
-            {visibleAnimations.map((animationEntry) => (
+            {visibleAnimations.map((entry) => (
               <Button
-                key={animationEntry.id}
-                onClick={() => handleAnimationClick(animationEntry.id)}
-                variant={animation === animationEntry.id ? 'active' : 'outline'}
+                key={entry.id}
+                onClick={() => handleAnimationClick(entry.id)}
+                variant={animation === entry.id ? 'active' : 'outline'}
               >
-                {animationEntry.config?.name ?? animationEntry.id}
+                {entry.config?.name ?? entry.id}
               </Button>
             ))}
           </div>

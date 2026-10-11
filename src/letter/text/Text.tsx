@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'motion/react'
 import { getTextVariant, getTextAnimation } from './index'
 
-type TextProps = {
+interface TextProps {
   content: string
   variant?: string
   animation?: string

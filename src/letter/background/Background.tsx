@@ -1,9 +1,9 @@
 /* src/letter/background/Background.tsx */
 import { useEffect, useRef } from 'react'
 import { animate } from 'motion/react'
-import { getBackgroundVariant, getBackgroundAnimation } from './index'
+import { getBackgroundAnimation, getBackgroundVariant } from './index'
 
-type BackgroundProps = {
+interface BackgroundProps {
   variant?: string
   animation?: string
   children: React.ReactNode
@@ -41,8 +41,8 @@ export default function Background({
 
     const controls = animate(
       element,
-      animationKeyframes as any,
-      animationTransition as any
+      animationKeyframes as Parameters<typeof animate>[1],
+      animationTransition as Parameters<typeof animate>[2]
     )
 
     return () => {

@@ -1,12 +1,12 @@
 /* src/letter/button/Button.tsx */
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { COLORS, type ColorKey } from '../tokens/colors'
 import { SHAPES, type ShapeKey } from '../tokens/shapes'
 import { SIZES, type SizeKey } from '../tokens/sizes'
-import { getButtonVariant, getButtonAnimation } from './index'
+import { getButtonAnimation, getButtonVariant } from './index'
 
-type ButtonProps = {
+interface ButtonProps {
   text?: string
   color?: ColorKey
   shape?: ShapeKey
@@ -34,9 +34,10 @@ export default function Button({
   animation = '',
   onClick,
 }: ButtonProps) {
-  const animationConfig = animation ? getButtonAnimation(animation) : undefined
+  const animationConfig: any = animation ? getButtonAnimation(animation) : undefined
   const variantConfig = getButtonVariant(variant)
   const isTriggerAnimation = animationConfig?.category === 'trigger'
+  const isMotionAnimation = animationConfig?.category === 'motion'
 
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [messageIndex, setMessageIndex] = useState(0)
@@ -47,12 +48,11 @@ export default function Button({
   const containerRef = useRef<HTMLDivElement>(null)
   const lastMoveTimestampRef = useRef(0)
 
-  const applyRandomPosition = () => {
+  const applyRandomPosition = (): void => {
     const container = containerRef.current
     if (!container) return
 
     const { width, height } = container.getBoundingClientRect()
-
     const maxOffsetX = Math.max(width / 2 - 40, 100)
     const maxOffsetY = Math.max(height / 2 - 40, 80)
 
@@ -73,7 +73,7 @@ export default function Button({
     setPosition({ x: newX, y: newY })
   }
 
-  const triggerMove = () => {
+  const triggerMove = (): void => {
     setMessageIndex((previousIndex) => (previousIndex + 1) % RUNAWAY_MESSAGES.length)
     setIsMessageVisible(true)
 
@@ -90,7 +90,7 @@ export default function Button({
     }
   }
 
-  const handleInteraction = (event: any) => {
+  const handleInteraction = (event: React.MouseEvent | React.TouchEvent): void => {
     if (!isTriggerAnimation) return
 
     event.preventDefault()
@@ -103,7 +103,7 @@ export default function Button({
     triggerMove()
   }
 
-  const handleClick = (event: React.MouseEvent) => {
+  const handleClick = (event: React.MouseEvent): void => {
     if (isTriggerAnimation) {
       event.preventDefault()
       event.stopPropagation()
@@ -113,8 +113,10 @@ export default function Button({
     onClick?.()
   }
 
-  const rawVariants = animationConfig?.category === 'motion' ? animationConfig.variants : {}
-  const { transition: animationTransition, ...motionVariants } = rawVariants as any
+  const animationVariants: any = isMotionAnimation ? animationConfig?.variants ?? {} : {}
+  const animationTransition: any = isMotionAnimation
+    ? animationConfig?.transition ?? { type: 'spring', stiffness: 400, damping: 20 }
+    : { type: 'spring', stiffness: 400, damping: 20 }
 
   return (
     <div ref={containerRef} className="relative w-full h-full flex items-center justify-center">
@@ -157,8 +159,8 @@ export default function Button({
             className="relative"
           >
             <motion.button
-              animate={motionVariants}
-              transition={animationTransition ?? { type: 'spring', stiffness: 400, damping: 20 }}
+              animate={animationVariants}
+              transition={animationTransition}
               onHoverStart={(event) => handleInteraction(event as any)}
               onTouchStart={(event) => handleInteraction(event as any)}
               onTouchMove={(event) => handleInteraction(event as any)}
@@ -195,4 +197,4 @@ export default function Button({
       </AnimatePresence>
     </div>
   )
-} 
+}

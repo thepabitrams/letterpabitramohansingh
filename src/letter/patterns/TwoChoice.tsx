@@ -2,28 +2,40 @@
 import { useState } from 'react'
 import { Background } from '../background'
 import { Effect } from '../effect'
-import { Text } from '../text'
+import { Text, getTextVariant } from '../text'
 import { MessageBox } from '../message-box'
 import { Button } from '../button'
-import { getTextVariant } from '../text'
 
-export type TwoChoiceConfig = {
+interface EffectOptions {
+  senderLabel?: string
+  recipientLabel?: string
+  hideLabels?: string
+}
+
+interface ButtonConfig {
+  text: string
+  color: string
+  shape: string
+  size: string
+  variant: string
+  animation: string
+}
+
+export interface TwoChoiceConfig {
   header?: { enabled: boolean; text: string; variant: string; animation: string }
   message: string
   background: string
   backgroundAnimation: string
   effect: string
+  effectOptions?: EffectOptions
   textVariant: string
   textAnimation: string
   messageBox: { variant: string; animation: string }
-  buttons: {
-    yes: { text: string; color: string; shape: string; size: string; variant: string; animation: string }
-    no: { text: string; color: string; shape: string; size: string; variant: string; animation: string }
-  }
-  submitButton: { text: string; color: string; shape: string; size: string; variant: string; animation: string }
+  buttons: { yes: ButtonConfig; no: ButtonConfig }
+  submitButton: ButtonConfig
 }
 
-type TwoChoiceProps = {
+interface TwoChoiceProps {
   config: TwoChoiceConfig
   onReply: (reply: string) => void
   onNote: (note: string) => void
@@ -52,14 +64,17 @@ export default function TwoChoice({
   const replyNoteText = existingReply?.note ?? ''
   const textVariantConfig = getTextVariant(config.textVariant)
 
-  const handleChoiceClick = async (buttonText: string) => {
+  const showChoiceButtons = !hasReplied || preview
+  const showNoteArea = isNotePending || preview
+
+  const handleChoiceClick = async (buttonText: string): Promise<void> => {
     if (preview || hasReplied) return
     setIsSaving(true)
     await onReply(buttonText)
     setIsSaving(false)
   }
 
-  const handleSubmitNote = async () => {
+  const handleSubmitNote = async (): Promise<void> => {
     if (preview || isNoteSubmitted) return
     setIsSaving(true)
     await onNote(noteText)
@@ -68,7 +83,12 @@ export default function TwoChoice({
 
   return (
     <Background variant={config.background} animation={config.backgroundAnimation}>
-      <Effect variant={config.effect} />
+      <Effect
+        variant={config.effect}
+        senderName={senderName}
+        recipientName={recipientName}
+        effectOptions={config.effectOptions}
+      />
       <div className="relative z-10 max-w-md w-full space-y-4">
         {senderName && (
           <p className="text-center text-xs tracking-[0.3em] text-gray-500 font-semibold">
@@ -93,7 +113,7 @@ export default function TwoChoice({
           textAnimation={config.textAnimation}
         />
 
-        {!hasReplied && (
+        {showChoiceButtons && (
           <div className="flex gap-4 justify-center items-center pt-2">
             <Button
               text={config.buttons.yes.text}
@@ -116,13 +136,14 @@ export default function TwoChoice({
           </div>
         )}
 
-        {isNotePending && (
+        {showNoteArea && (
           <div className="space-y-3">
             <MessageBox
               content={noteText}
               variant={config.messageBox.variant}
               animation="fade"
               editable
+              readOnly={preview}
               onChange={setNoteText}
               placeholder={
                 preview

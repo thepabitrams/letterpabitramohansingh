@@ -1,29 +1,29 @@
 /* src/letter/effect/variants/hearts-chase.tsx */
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, type CSSProperties } from 'react'
 
-type HeartsChaseProps = {
-  recipientName?: string
+interface HeartsChaseProps {
   senderName?: string
+  recipientName?: string
 }
 
-type Position = {
+interface Position {
   x: number
   y: number
 }
 
 type ChaseMode = 'chase' | 'meet' | 'split'
 
-type ParticleOptions = Partial<{
-  speed: number
-  angle: number
-  life: number
-  size: number
-  lift: number
-  drag: number
-  color: string
-}>
+interface ParticleOptions {
+  speed?: number
+  angle?: number
+  life?: number
+  size?: number
+  lift?: number
+  drag?: number
+  color?: string
+}
 
-type Particle = {
+interface Particle {
   x: number
   y: number
   vx: number
@@ -37,7 +37,7 @@ type Particle = {
   drag: number
 }
 
-type ChaseState = {
+interface ChaseState {
   sender: Position
   recipient: Position
   senderTarget: Position
@@ -64,7 +64,7 @@ const KEYFRAMES = `
   }
 `
 
-const LABEL_STYLE: React.CSSProperties = {
+const LABEL_STYLE: CSSProperties = {
   display: 'inline-block',
   fontSize: '13px',
   fontWeight: 800,
@@ -82,48 +82,11 @@ const LABEL_STYLE: React.CSSProperties = {
   textOverflow: 'ellipsis',
 }
 
-let cachedSenderName = 'ME'
-let cachedRecipientName = 'YOU'
-let isNamesCached = false
+const clampValue = (value: number, min: number, max: number): number =>
+  value < min ? min : value > max ? max : value
 
-function resolveNamesFromUrl(props: HeartsChaseProps): void {
-  let senderName = 'ME'
-  let recipientName = 'YOU'
-
-  if (typeof window !== 'undefined') {
-    const pathSegments = window.location.pathname.split('/').filter((segment) => {
-      return (
-        segment &&
-        segment.length > 1 &&
-        segment.length < 30 &&
-        /^[a-z0-9-]+$/i.test(segment)
-      )
-    })
-
-    if (pathSegments.length >= 2) {
-      senderName = pathSegments[pathSegments.length - 2].replace(/-/g, ' ').toUpperCase()
-      recipientName = pathSegments[pathSegments.length - 1].replace(/-/g, ' ').toUpperCase()
-    } else if (pathSegments.length === 1) {
-      senderName = pathSegments[0].replace(/-/g, ' ').toUpperCase()
-      recipientName = 'YOU'
-    }
-  } else {
-    senderName = (props.senderName || 'ME').toUpperCase()
-    recipientName = (props.recipientName || 'YOU').toUpperCase()
-  }
-
-  cachedSenderName = senderName
-  cachedRecipientName = recipientName
-  isNamesCached = true
-}
-
-const clamp = (value: number, min: number, max: number): number => {
-  return value < min ? min : value > max ? max : value
-}
-
-const computeDistance = (first: Position, second: Position): number => {
-  return Math.sqrt((first.x - second.x) ** 2 + (first.y - second.y) ** 2)
-}
+const computeDistance = (first: Position, second: Position): number =>
+  Math.sqrt((first.x - second.x) ** 2 + (first.y - second.y) ** 2)
 
 const pickRandomPosition = (avoidPosition?: Position, minDistance = 0): Position => {
   let candidateX = 50
@@ -135,10 +98,7 @@ const pickRandomPosition = (avoidPosition?: Position, minDistance = 0): Position
 
     if (
       !avoidPosition ||
-      computeDistance(
-        { x: candidateX, y: candidateY },
-        avoidPosition
-      ) >= minDistance
+      computeDistance({ x: candidateX, y: candidateY }, avoidPosition) >= minDistance
     ) {
       break
     }
@@ -147,15 +107,11 @@ const pickRandomPosition = (avoidPosition?: Position, minDistance = 0): Position
   return { x: candidateX, y: candidateY }
 }
 
-const HeartsChaseLayer = (props: HeartsChaseProps) => {
+const HeartsChaseLayer = ({ senderName = 'ME', recipientName = 'YOU' }: HeartsChaseProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const senderHeartRef = useRef<HTMLDivElement>(null)
   const recipientHeartRef = useRef<HTMLDivElement>(null)
-
-  if (!isNamesCached) {
-    resolveNamesFromUrl(props)
-  }
 
   useEffect(() => {
     const container = containerRef.current
@@ -281,12 +237,12 @@ const HeartsChaseLayer = (props: HeartsChaseProps) => {
 
     const moveSenderTowardTarget = (deltaTime: number, rate: number) => {
       const interpolationFactor = 1 - Math.exp(-rate * deltaTime)
-      state.sender.x = clamp(
+      state.sender.x = clampValue(
         state.sender.x + (state.senderTarget.x - state.sender.x) * interpolationFactor,
         BOUNDS.xMin,
         BOUNDS.xMax
       )
-      state.sender.y = clamp(
+      state.sender.y = clampValue(
         state.sender.y + (state.senderTarget.y - state.sender.y) * interpolationFactor,
         BOUNDS.yMin,
         BOUNDS.yMax
@@ -295,12 +251,12 @@ const HeartsChaseLayer = (props: HeartsChaseProps) => {
 
     const moveRecipientTowardTarget = (deltaTime: number, rate: number) => {
       const interpolationFactor = 1 - Math.exp(-rate * deltaTime)
-      state.recipient.x = clamp(
+      state.recipient.x = clampValue(
         state.recipient.x + (state.recipientTarget.x - state.recipient.x) * interpolationFactor,
         BOUNDS.xMin,
         BOUNDS.xMax
       )
-      state.recipient.y = clamp(
+      state.recipient.y = clampValue(
         state.recipient.y + (state.recipientTarget.y - state.recipient.y) * interpolationFactor,
         BOUNDS.yMin,
         BOUNDS.yMax
@@ -458,17 +414,19 @@ const HeartsChaseLayer = (props: HeartsChaseProps) => {
             willChange: 'transform',
           }}
         >
-          <div
-            className="absolute text-center"
-            style={{
-              bottom: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              marginBottom: 8,
-            }}
-          >
-            <span style={LABEL_STYLE}>{cachedSenderName}</span>
-          </div>
+          {senderName && (
+            <div
+              className="absolute text-center"
+              style={{
+                bottom: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                marginBottom: 8,
+              }}
+            >
+              <span style={LABEL_STYLE}>{senderName}</span>
+            </div>
+          )}
           <div
             className="absolute inset-0 flex items-center justify-center leading-none"
             style={{
@@ -507,17 +465,19 @@ const HeartsChaseLayer = (props: HeartsChaseProps) => {
           >
             ♥
           </div>
-          <div
-            className="absolute text-center"
-            style={{
-              top: '100%',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              marginTop: 8,
-            }}
-          >
-            <span style={LABEL_STYLE}>{cachedRecipientName}</span>
-          </div>
+          {recipientName && (
+            <div
+              className="absolute text-center"
+              style={{
+                top: '100%',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                marginTop: 8,
+              }}
+            >
+              <span style={LABEL_STYLE}>{recipientName}</span>
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -528,7 +488,10 @@ export default {
   id: 'hearts-chase',
   name: 'Hearts Chase',
   component: HeartsChaseLayer,
-
+  options: [
+    { key: 'senderLabel', label: 'Sender label', placeholder: 'Sender name' },
+    { key: 'recipientLabel', label: 'Recipient label', placeholder: 'Recipient name' },
+  ],
   standalone: {
     script: `
       (function () {
@@ -564,23 +527,25 @@ export default {
           bodyElement.textContent = '\\u2665';
           heartElement.appendChild(bodyElement);
 
-          var labelWrapper = document.createElement('div');
-          labelWrapper.style.cssText = 'position:absolute;left:50%;transform:translateX(-50%);';
+          if (name) {
+            var labelWrapper = document.createElement('div');
+            labelWrapper.style.cssText = 'position:absolute;left:50%;transform:translateX(-50%);';
 
-          if (namePosition === 'above') {
-            labelWrapper.style.bottom = '100%';
-            labelWrapper.style.marginBottom = '8px';
-          } else {
-            labelWrapper.style.top = '100%';
-            labelWrapper.style.marginTop = '8px';
+            if (namePosition === 'above') {
+              labelWrapper.style.bottom = '100%';
+              labelWrapper.style.marginBottom = '8px';
+            } else {
+              labelWrapper.style.top = '100%';
+              labelWrapper.style.marginTop = '8px';
+            }
+
+            var labelTextElement = document.createElement('span');
+            labelTextElement.style.cssText = LABEL_STYLE;
+            labelTextElement.textContent = name;
+
+            labelWrapper.appendChild(labelTextElement);
+            heartElement.appendChild(labelWrapper);
           }
-
-          var labelTextElement = document.createElement('span');
-          labelTextElement.style.cssText = LABEL_STYLE;
-          labelTextElement.textContent = name;
-
-          labelWrapper.appendChild(labelTextElement);
-          heartElement.appendChild(labelWrapper);
 
           effectLayer.appendChild(heartElement);
           return heartElement;

@@ -1,5 +1,5 @@
 /* src/pages/LetterView.tsx */
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, type ComponentType } from 'react'
 import { useParams } from 'react-router'
 import { FaCamera, FaDownload } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
@@ -8,14 +8,59 @@ import { getLetter, replyLetter, saveNote } from '../core/lib/api'
 import { generateStandaloneHTML } from '../core/lib/export/html'
 import { captureLetterAsImage, downloadDataUrl } from '../core/lib/export/image'
 
-type ReplyState = {
+interface ReplyState {
   reply: string
   note: string | null
 }
 
+interface MessageBoxConfig {
+  variant: string
+  animation: string
+}
+
+interface EffectOptions {
+  senderLabel?: string
+  recipientLabel?: string
+  hideLabels?: string
+}
+
+interface LetterConfig {
+  background: string
+  backgroundAnimation?: string
+  effect: string
+  effectOptions?: EffectOptions
+  textVariant: string
+  textAnimation: string
+  messageBox: MessageBoxConfig
+}
+
+interface Letter {
+  senderName: string
+  recipientName: string
+  message: string
+  pattern: string
+  status: string
+  reply: string | null
+  replyNote: string | null
+  config: LetterConfig
+}
+
+interface PatternComponentProps {
+  config: Record<string, unknown> & { message: string }
+  onReply: (replyText: string) => Promise<void>
+  onNote: (noteText: string) => Promise<void>
+  existingReply: ReplyState | null
+  senderName: string
+  recipientName: string
+}
+
+function resolvePatternComponent(patternId: PatternId): ComponentType<PatternComponentProps> {
+  return PATTERNS[patternId] as unknown as ComponentType<PatternComponentProps>
+}
+
 export function LetterView() {
-  const { sender, slug } = useParams()
-  const [letter, setLetter] = useState<any>(null)
+  const { sender, slug } = useParams<{ sender: string; slug: string }>()
+  const [letter, setLetter] = useState<Letter | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [replyState, setReplyState] = useState<ReplyState | null>(null)
@@ -24,8 +69,11 @@ export function LetterView() {
   useEffect(() => {
     if (!sender || !slug) return
 
+    let isCancelled = false
+
     getLetter(sender, slug)
-      .then((letterData) => {
+      .then((letterData: Letter) => {
+        if (isCancelled) return
         setLetter(letterData)
         if (letterData.status === 'replied' || letterData.replyNote !== null) {
           setReplyState({
@@ -34,17 +82,25 @@ export function LetterView() {
           })
         }
       })
-      .catch((error) => setErrorMessage(error.message))
-      .finally(() => setIsLoading(false))
+      .catch((error: Error) => {
+        if (!isCancelled) setErrorMessage(error.message)
+      })
+      .finally(() => {
+        if (!isCancelled) setIsLoading(false)
+      })
+
+    return () => {
+      isCancelled = true
+    }
   }, [sender, slug])
 
-  const handleReply = async (replyText: string) => {
+  const handleReply = async (replyText: string): Promise<void> => {
     if (!sender || !slug) return
     await replyLetter(sender, slug, replyText)
     setReplyState({ reply: replyText, note: null })
   }
 
-  const handleNote = async (noteText: string) => {
+  const handleNote = async (noteText: string): Promise<void> => {
     if (!sender || !slug) return
     await saveNote(sender, slug, noteText)
     setReplyState((previousState) =>
@@ -54,18 +110,18 @@ export function LetterView() {
     )
   }
 
-  const handleSaveImage = async () => {
+  const handleSaveImage = async (): Promise<void> => {
     if (!letterRef.current) return
 
     try {
       const dataUrl = await captureLetterAsImage(letterRef.current)
       downloadDataUrl(dataUrl, `${sender}-${slug}.png`)
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Failed to capture image:', error)
     }
   }
 
-  const handleDownloadHTML = () => {
+  const handleDownloadHTML = (): void => {
     if (!letter) return
 
     const html = generateStandaloneHTML({
@@ -78,6 +134,7 @@ export function LetterView() {
       background: letter.config.background,
       backgroundAnimation: letter.config.backgroundAnimation,
       effect: letter.config.effect,
+      effectOptions: letter.config.effectOptions,
       textVariant: letter.config.textVariant,
       textAnimation: letter.config.textAnimation,
       messageBoxVariant: letter.config.messageBox.variant,
@@ -120,6 +177,7 @@ export function LetterView() {
   const footerActions = isNoteSubmitted ? (
     <>
       <button
+        type="button"
         onClick={handleSaveImage}
         className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
       >
@@ -127,6 +185,7 @@ export function LetterView() {
         Save as Image
       </button>
       <button
+        type="button"
         onClick={handleDownloadHTML}
         className="flex items-center gap-1.5 text-xs text-gray-600 hover:text-gray-900 transition"
       >
@@ -136,7 +195,7 @@ export function LetterView() {
     </>
   ) : null
 
-  const PatternComponent = PATTERNS[letter.pattern as PatternId]
+  const PatternComponent = resolvePatternComponent(letter.pattern as PatternId)
 
   return (
     <div className="min-h-screen flex flex-col">
