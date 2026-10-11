@@ -54,14 +54,14 @@ Both conditions must be true:
 
 ---
 
-## Files WITH `standalone` (14)
+## Files WITH `standalone`
 
 | Folder | Files | Reason |
 |---|---|---|
-| `effect/variants/` | hearts, confetti, snow, fireworks, none | React `motion.div` |
-| `text/variants/` | romantic, modern, handwritten | Google Fonts URL |
-| `text/animations/` | fade, slide, typewriter, none | Motion + custom JS |
-| `background/animations/` | parallax, static | Motion |
+| `background/animations/` | bubble-rise, clouds, floating-shapes, grid-pulse, heartbeat, parallax, particles, ripples, sparkles, starfield, static, vertical-lines | Motion / animation loop |
+| `effect/variants/` | butterflies, confetti, fireflies, fireworks, hearts, hearts-chase, hearts-collide, none, petals, snow, sparkles | React `motion.div` or canvas |
+| `text/variants/` | handwritten, modern, romantic | Google Fonts URL |
+| `text/animations/` | fade, none, slide, typewriter | Motion + custom JS |
 
 ---
 
@@ -130,11 +130,11 @@ Before writing manual CSS or JS, ask:
 When adding a new variant, do not edit:
 
 - `index.ts` — auto-loader for each folder
-- `src/core/lib/export/html/` — HTML orchestrator
+- `src/core/export/html/` — HTML orchestrator
 - `vite.config.ts` — font auto-injection plugin
 
 Create the new file. Done.
 
 ---
 
-*Last updated: 2026-10-10*
+*Last updated: 2026-10-12*

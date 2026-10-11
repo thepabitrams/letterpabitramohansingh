@@ -5,8 +5,8 @@ import { FaCamera, FaDownload } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
 import { getLetter, replyLetter, saveNote } from '../core/lib/api'
-import { generateStandaloneHTML } from '../core/lib/export/html'
-import { captureLetterAsImage, downloadDataUrl } from '../core/lib/export/image'
+import { generateStandaloneHTML } from '../core/export/html'
+import { captureLetterAsImage, downloadDataUrl } from '../core/export/image'
 
 interface ReplyState {
   reply: string

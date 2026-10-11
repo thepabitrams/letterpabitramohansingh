@@ -1,8 +1,8 @@
 /* src/core/lib/export/html/index.ts */
-import { getBackgroundVariant, getBackgroundAnimation } from '../../../../letter/background'
-import { getEffectVariant } from '../../../../letter/effect'
-import { getMessageBoxVariant } from '../../../../letter/message-box'
-import { getTextVariant, getTextAnimation } from '../../../../letter/text'
+import { getBackgroundVariant, getBackgroundAnimation } from '../../../letter/background'
+import { getEffectVariant } from '../../../letter/effect'
+import { getMessageBoxVariant } from '../../../letter/message-box'
+import { getTextVariant, getTextAnimation } from '../../../letter/text'
 import { buildTemplate } from './template'
 
 interface EffectOptions {

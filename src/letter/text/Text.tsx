@@ -1,7 +1,7 @@
 /* src/letter/text/Text.tsx */
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
-import { getTextVariant, getTextAnimation } from './index'
+import { getTextAnimation, getTextVariant } from './index'
 
 interface TextProps {
   content: string
@@ -10,8 +10,20 @@ interface TextProps {
   as?: 'heading' | 'body'
 }
 
-function renderMarkdown(rawContent: string): string {
-  return rawContent
+const HTML_ESCAPE_MAP: Record<string, string> = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (char) => HTML_ESCAPE_MAP[char] ?? char)
+}
+
+function renderInlineMarkdown(rawContent: string): string {
+  return escapeHtml(rawContent)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
     .replace(/\n/g, '<br />')
@@ -41,7 +53,7 @@ function Typewriter({ content }: { content: string }) {
 
   return (
     <span>
-      <span dangerouslySetInnerHTML={{ __html: renderMarkdown(displayedText) }} />
+      <span dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(displayedText) }} />
       {!isComplete && <span className="animate-pulse">|</span>}
     </span>
   )
@@ -61,7 +73,8 @@ export default function Text({
       ? variantConfig?.headingClass ?? ''
       : variantConfig?.bodyClass ?? ''
 
-  const isTypewriterAnimation = (animationConfig as any)?.typewriter === true
+  const isTypewriterAnimation =
+    (animationConfig as { typewriter?: boolean } | undefined)?.typewriter === true
 
   if (isTypewriterAnimation) {
     return (
@@ -78,7 +91,7 @@ export default function Text({
       animate={animationConfig?.variants?.animate ?? {}}
       transition={animationConfig?.variants?.transition ?? {}}
       className={appliedClassName}
-      dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+      dangerouslySetInnerHTML={{ __html: renderInlineMarkdown(content) }}
     />
   )
 }

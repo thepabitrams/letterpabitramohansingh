@@ -1,0 +1,114 @@
+Letter
+Copyright 2026 Pabitra Mohan Singh
+
+This project includes software developed by third parties.
+
+THIRD-PARTY SOFTWARE NOTICES
+============================
+
+TypeScript
+https://www.typescriptlang.org
+License: Apache-2.0
+Copyright (c) Microsoft Corporation
+
+---
+
+React
+https://react.dev
+License: MIT
+Copyright (c) Meta Platforms, Inc. and affiliates
+
+---
+
+React DOM
+https://react.dev
+License: MIT
+Copyright (c) Meta Platforms, Inc. and affiliates
+
+---
+
+React Router
+https://reactrouter.com
+License: MIT
+Copyright (c) React Training LLC 2015-2019
+
+---
+
+React Icons
+https://react-icons.github.io/react-icons
+License: MIT
+Copyright (c) Goran Gajic
+
+---
+
+Vite
+https://vitejs.dev
+License: MIT
+Copyright (c) 2019-present, Yuxi (Evan) You and Vite contributors
+
+---
+
+Motion
+https://motion.dev
+License: MIT
+Copyright (c) 2018 Framer B.V.
+
+---
+
+Tailwind CSS
+https://tailwindcss.com
+License: MIT
+Copyright (c) Tailwind Labs, Inc.
+
+---
+
+Hono
+https://hono.dev
+License: MIT
+Copyright (c) 2021-present, Yusuke Wada and Hono contributors
+
+---
+
+Better Auth
+https://better-auth.com
+License: MIT
+Copyright (c) Bereket Engida
+
+---
+
+Drizzle ORM
+https://orm.drizzle.team
+License: Apache-2.0
+Copyright (c) 2020-2024 Drizzle Team
+
+---
+
+SnapDOM
+https://github.com/zumerlab/snapdom
+License: MIT
+Copyright (c) Zumerlab
+
+---
+
+Cloudflare Workers SDK
+https://github.com/cloudflare/workers-sdk
+License: MIT
+Copyright (c) Cloudflare, Inc.
+
+---
+
+Oxlint
+https://oxc.rs
+License: MIT
+Copyright (c) 2023-present, Boshen Zhang and contributors
+
+---
+
+DefinitelyTyped
+https://github.com/DefinitelyTyped/DefinitelyTyped
+License: MIT
+Copyright (c) DefinitelyTyped contributors
+
+---
+
+Full license texts are available in the LICENSES/ directory.
