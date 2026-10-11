@@ -3,8 +3,8 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { eq, sql } from 'drizzle-orm'
 import { createAuth } from './auth'
-import { getDb, type Bindings } from './db/client'
-import { letters } from './db/schema'
+import { getDb, type Bindings } from '../db/client'
+import { letters } from '../db/schema'
 
 type AppVariables = {
   user: { id: string; email: string; name: string; image?: string | null } | null

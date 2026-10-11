@@ -1,7 +1,7 @@
 /* src/core/auth.ts */
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { getDb, type Bindings } from './db/client'
+import { getDb, type Bindings } from '../db/client'
 
 const SESSION_MAX_AGE_SECONDS = 60 * 60 * 24 * 7
 const SESSION_UPDATE_AGE_SECONDS = 60 * 60 * 24
