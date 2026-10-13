@@ -5,3 +5,10 @@
 ## Pages
 
 - [Home](https://letters.pabitramohansingh.com/): Create and send personalized letters
+- [About](https://letters.pabitramohansingh.com/about): What Letters is, why it exists, and who built it
+
+## Author
+
+- Pabitra Mohan Singh
+- Portfolio: https://pabitramohansingh.com
+- GitHub: https://github.com/thepabitrams

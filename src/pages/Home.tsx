@@ -1,4 +1,5 @@
 // src/pages/Home.tsx
+
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { FaCheck, FaCopy } from 'react-icons/fa'
@@ -8,6 +9,8 @@ import { Editor } from '../letter/editor'
 import type { PatternId } from '../letter/patterns'
 import { authClient } from '../core/lib/auth-client'
 import { createLetter, getMe } from '../core/lib/api'
+import { PageMeta } from '../core/seo/PageMeta'
+import { buildHomeSchemaGraph } from '../core/seo/structured-data'
 
 interface User {
   id: string
@@ -60,6 +63,10 @@ const DEFAULT_LETTER_CONFIG: LetterConfig = {
   button: { text: 'Accept', color: 'green', shape: 'pill', size: 'md', variant: 'solid', animation: '' },
   submitButton: { text: 'Submit', color: 'blue', shape: 'rounded', size: 'md', variant: 'solid', animation: '' },
 }
+
+const HOME_PAGE_TITLE = 'Create & Send Beautiful Personalized Messages'
+const HOME_PAGE_DESCRIPTION =
+  'Create beautiful personalized letters with Yes/No choices, notes, and romantic messages. Send them to loved ones — they auto-delete after a few days.'
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message
@@ -179,6 +186,13 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
+      <PageMeta
+        title={HOME_PAGE_TITLE}
+        description={HOME_PAGE_DESCRIPTION}
+        path="/"
+        structuredData={buildHomeSchemaGraph()}
+      />
+
       <Header
         user={user}
         onLoginClick={() => setIsLoginModalOpen(true)}
