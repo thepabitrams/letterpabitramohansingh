@@ -33,7 +33,7 @@ export function MessageBoxPicker({
     <Accordion title="Message Box" subtitle={subtitle}>
       <div className="space-y-4">
         <div>
-          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
             Style
           </h3>
           <div className="flex flex-wrap gap-2">
@@ -49,7 +49,7 @@ export function MessageBoxPicker({
           </div>
         </div>
         <div>
-          <h3 className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2 uppercase tracking-wide">
             Animation
           </h3>
           <div className="flex flex-wrap gap-2">

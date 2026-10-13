@@ -1,4 +1,4 @@
-// src/core/components/ui/LoginModal.tsx 
+// src/core/components/ui/LoginModal.tsx
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { FcGoogle } from 'react-icons/fc'
@@ -43,26 +43,26 @@ export function LoginModal({ open, onClose }: LoginModalProps) {
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.96, opacity: 0 }}
             onClick={(event) => event.stopPropagation()}
-            className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-xl"
+            className="bg-white dark:bg-gray-900 rounded-2xl p-8 max-w-sm w-full shadow-xl border border-transparent dark:border-gray-800 transition-colors"
           >
-            <h2 className="text-2xl font-normal text-gray-800 mb-1">Sign in</h2>
-            <p className="text-sm text-gray-600 mb-6">to continue to Letter</p>
+            <h2 className="text-2xl font-normal text-gray-800 dark:text-gray-100 mb-1">Sign in</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">to continue to Letters</p>
 
             <button
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 border border-gray-300 rounded-md py-2.5 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50 transition disabled:opacity-60"
+              className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-700 rounded-md py-2.5 px-4 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:opacity-60"
             >
               <FcGoogle className="text-xl" />
               {isLoading ? 'Signing in...' : 'Continue with Google'}
             </button>
 
             {errorMessage && (
-              <p className="text-xs text-red-600 mt-3">{errorMessage}</p>
+              <p className="text-xs text-red-600 dark:text-red-400 mt-3">{errorMessage}</p>
             )}
 
-            <div className="mt-6 pt-4 border-t border-gray-100">
-              <p className="text-xs text-gray-500 leading-relaxed">
+            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
                 By continuing, you agree to receive a letter. Be nice.
               </p>
             </div>

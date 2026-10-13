@@ -4,24 +4,32 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/icon/pabitra-avatar-black.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>letterpabitramohansingh</title>
+    <title>Letters</title>
+    <script>
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
     <script>
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const favicon = document.querySelector("link[rel='icon']");
+      const faviconLink = document.querySelector("link[rel='icon']");
 
-      const updateFavicon = (isDark) => {
-        if (favicon) {
-          favicon.href = isDark ? '/icon/pabitra-avatar-white.svg' : '/icon/pabitra-avatar-black.svg';
+      const updateFavicon = (isDarkMode) => {
+        if (faviconLink) {
+          faviconLink.href = isDarkMode 
+            ? '/icon/pabitra-avatar-white.svg' 
+            : '/icon/pabitra-avatar-black.svg';
         }
       };
 
       updateFavicon(mediaQuery.matches);
-      mediaQuery.addEventListener('change', (e) => updateFavicon(e.matches));
+      mediaQuery.addEventListener('change', (event) => updateFavicon(event.matches));
     </script>
   </body>
 </html>

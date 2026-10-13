@@ -1,3 +1,4 @@
+// src/core/components/ui/Accordion.tsx
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import { FaChevronDown } from 'react-icons/fa'
@@ -18,22 +19,22 @@ export function Accordion({
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden transition-colors">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition"
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition"
       >
         <div className="flex flex-col items-start">
-          <span className="text-sm font-semibold text-gray-800">{title}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-gray-100">{title}</span>
           {subtitle && (
-            <span className="text-xs text-gray-500 mt-0.5">{subtitle}</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{subtitle}</span>
           )}
         </div>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          <FaChevronDown className="text-gray-400 text-xs" />
+          <FaChevronDown className="text-gray-400 dark:text-gray-500 text-xs" />
         </motion.div>
       </button>
 

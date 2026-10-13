@@ -9,7 +9,7 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
   const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="bg-white border-t border-gray-200">
+    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 transition-colors">
       <div className="max-w-6xl mx-auto px-4 py-4 flex flex-col items-center gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
         {actions && (
           <nav
@@ -31,7 +31,7 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
           <span>Buy me a coffee</span>
         </a>
 
-        <p className="text-xs text-gray-400 text-center md:text-right order-3 md:order-0">
+        <p className="text-xs text-gray-400 dark:text-gray-500 text-center md:text-right order-3 md:order-0">
           © {currentYear} Pabitra Mohan Singh
         </p>
       </div>

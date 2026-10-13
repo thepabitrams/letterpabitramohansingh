@@ -5,7 +5,7 @@ import { FaHtml5, FaImage } from 'react-icons/fa'
 import { Footer } from '../core/components/layout/Footer'
 import { PATTERNS, type PatternId } from '../letter/patterns'
 import { getLetter, replyLetter, saveNote } from '../core/lib/api'
-import { generateStandaloneHTML } from '../core/export/html'
+import { generateStandaloneHtml } from '../core/export/html'
 import { captureLetterAsImage, downloadDataUrl } from '../core/export/image'
 
 interface ReplyState {
@@ -34,7 +34,7 @@ interface LetterConfig {
   messageBox: MessageBoxConfig
 }
 
-interface Letter {
+interface LetterData {
   senderName: string
   recipientName: string
   message: string
@@ -60,7 +60,7 @@ function resolvePatternComponent(patternId: PatternId): ComponentType<PatternCom
 
 export function LetterView() {
   const { sender, slug } = useParams<{ sender: string; slug: string }>()
-  const [letter, setLetter] = useState<Letter | null>(null)
+  const [letter, setLetter] = useState<LetterData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const [replyState, setReplyState] = useState<ReplyState | null>(null)
@@ -72,7 +72,7 @@ export function LetterView() {
     let isCancelled = false
 
     getLetter(sender, slug)
-      .then((letterData: Letter) => {
+      .then((letterData: LetterData) => {
         if (isCancelled) return
         setLetter(letterData)
         if (letterData.status === 'replied' || letterData.replyNote !== null) {
@@ -121,10 +121,10 @@ export function LetterView() {
     }
   }
 
-  const handleDownloadHTML = (): void => {
+  const handleDownloadHtml = (): void => {
     if (!letter) return
 
-    const html = generateStandaloneHTML({
+    const html = generateStandaloneHtml({
       senderName: letter.senderName,
       recipientName: letter.recipientName,
       message: letter.message,
@@ -149,20 +149,22 @@ export function LetterView() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading letter...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-colors">
+        <div className="text-gray-500 dark:text-gray-400">Loading letter...</div>
       </div>
     )
   }
 
   if (errorMessage || !letter) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors">
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="text-center">
             <div className="text-6xl mb-4">💔</div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Letter not found</h2>
-            <p className="text-gray-500">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+              Letter not found
+            </h2>
+            <p className="text-gray-500 dark:text-gray-400">
               {errorMessage || 'This letter may have expired.'}
             </p>
           </div>
@@ -180,16 +182,16 @@ export function LetterView() {
         type="button"
         onClick={handleSaveImage}
         aria-label="Save letter as image"
-        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition whitespace-nowrap"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition whitespace-nowrap"
       >
         <FaImage size={14} aria-hidden="true" />
         <span>Save as Image</span>
       </button>
       <button
         type="button"
-        onClick={handleDownloadHTML}
+        onClick={handleDownloadHtml}
         aria-label="Download letter as HTML"
-        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 border border-gray-200 text-xs font-medium text-gray-700 hover:bg-gray-100 hover:border-gray-300 transition whitespace-nowrap"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-xs font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition whitespace-nowrap"
       >
         <FaHtml5 size={14} aria-hidden="true" />
         <span>Download HTML</span>

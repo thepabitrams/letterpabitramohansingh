@@ -21,13 +21,13 @@ export function FromTo({
           label="From"
           value={senderName}
           onChange={setSenderName}
-          placeholder="Your name"
+          placeholder="Sender name"
         />
         <Input
           label="To"
           value={recipientName}
           onChange={setRecipientName}
-          placeholder="Her name"
+          placeholder="Recipient name"
         />
       </div>
     </Card>
