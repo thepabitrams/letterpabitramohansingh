@@ -1,9 +1,9 @@
 {
-  "name": "letterpabitramohansingh",
+  "name": "letters",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "packageManager": "pnpm@10.32.1",
+  "packageManager": "pnpm@12.11.2",
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild",
@@ -14,7 +14,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "pnpm run build && vite preview",
+    "deploy": "pnpm run build && wrangler deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
