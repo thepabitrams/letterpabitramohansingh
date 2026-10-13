@@ -10,7 +10,7 @@ export function Header({ user, onLoginClick, onLogout }: HeaderProps) {
     <nav className="bg-white border-b border-gray-200">
       <div className="max-w-6xl mx-auto px-6 py-3.5 flex items-center justify-between relative">
         <div className="absolute left-1/2 -translate-x-1/2 text-gray-900 font-semibold hidden md:block">
-          Letter By Pabitra Mohan Singh
+          Letters By Pabitra Mohan Singh
         </div>
 
         <div className="flex items-center gap-3 ml-auto">
