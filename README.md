@@ -1,6 +1,6 @@
 <div align="center">
 
-# Letter by Pabitra Mohan Singh
+# Letters by Pabitra Mohan Singh
 
 **Send beautifully animated, self-destructing letters over the web.**
 
@@ -14,7 +14,7 @@
 
 ### Live
 
-https://letter.pabitramohansingh.com
+https://letters.pabitramohansingh.com
 
 ### Screenshots
 
@@ -90,8 +90,8 @@ pages → letter → core → db
 ### Installation
 
 ```bash
-git clone https://github.com/thepabitrams/letterpabitramohansingh.git
-cd letterpabitramohansingh
+git clone https://github.com/thepabitrams/letters.git
+cd letters
 pnpm install
 ```
 
@@ -114,7 +114,7 @@ Generate and apply Drizzle migrations locally:
 
 ```bash
 npx drizzle-kit generate
-pnpm wrangler d1 migrations apply letter-db --local
+pnpm wrangler d1 migrations apply letters-db --local
 ```
 
 ### Development
@@ -149,7 +149,7 @@ Production deployment is automated via Cloudflare Workers Builds.
 | Deploy command | `pnpm wrangler deploy` |
 | Preview command | `pnpm wrangler versions upload` |
 
-Push to `main` triggers a production deploy to `letter.pabitramohansingh.com`. Pushes to any other branch create preview versions.
+Push to `main` triggers a production deploy to `letters.pabitramohansingh.com`. Pushes to any other branch create preview versions.
 
 ### Required Secrets
 
@@ -165,7 +165,7 @@ pnpm wrangler secret put GOOGLE_CLIENT_SECRET
 
 Configured in `wrangler.jsonc`:
 
-- DB – D1 database (letter-db)
+- DB – D1 database (letters-db)
 
 ## Folder Structure
 
