@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block Cloudflare preview URLs
+Disallow: /*.workers.dev/
+Disallow: /cdn-cgi/
+
+Sitemap: https://letters.pabitramohansingh.com/sitemap.xml
