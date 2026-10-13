@@ -15,8 +15,18 @@ interface FooterProps {
   actions?: React.ReactNode
 }
 
-const PAGE_LINKS = [
-  { label: 'About Letters', href: '/about' },
+const PAGE_LINKS_COL_1 = [
+  { label: 'About', href: '/about' },
+  { label: 'How It Works', href: '/how-it-works' },
+] as const
+
+const PAGE_LINKS_COL_2 = [
+  { label: 'Contact', href: '/contact' },
+  { label: 'Privacy', href: '/privacy' },
+] as const
+
+const PAGE_LINKS_COL_3 = [
+  { label: 'Terms', href: '/terms' },
 ] as const
 
 const SOCIAL_LINKS = [
@@ -46,27 +56,55 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
               Get to Know Letters
             </h3>
 
-            <ul className="flex flex-col items-center md:items-start gap-3">
-              {PAGE_LINKS.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    to={link.href}
-                    className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div className="grid grid-cols-3 gap-x-8 gap-y-3">
+              <ul className="flex flex-col gap-3">
+                {PAGE_LINKS_COL_1.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <ul className="flex flex-col gap-3">
+                {PAGE_LINKS_COL_2.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+
+              <ul className="flex flex-col gap-3">
+                {PAGE_LINKS_COL_3.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             <a
               href="https://buymeacoffee.com/pabitramohansingh"
               target="_blank"
               rel="noreferrer noopener"
               aria-label="Buy me a coffee (opens in new tab)"
-              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl bg-[#FFDD00] text-black text-base font-bold shadow-sm hover:bg-[#FFE733] hover:shadow-md transition-all whitespace-nowrap"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#FFDD00] text-black text-sm font-semibold shadow-sm hover:bg-[#FFE733] hover:shadow-md transition-all whitespace-nowrap"
             >
-              <FaCoffee size={22} aria-hidden="true" />
+              <FaCoffee size={16} aria-hidden="true" />
               <span>Buy me a coffee</span>
             </a>
           </div>
@@ -75,12 +113,12 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
             <img
               src="/icon/pabitra-avatar-suit-black.svg"
               alt="Pabitra Mohan Singh"
-              className="w-32 h-32 shrink-0 dark:hidden"
+              className="w-40 h-40 shrink-0 dark:hidden"
             />
             <img
               src="/icon/pabitra-avatar-suit-white.svg"
               alt="Pabitra Mohan Singh"
-              className="w-32 h-32 shrink-0 hidden dark:block"
+              className="w-40 h-40 shrink-0 hidden dark:block"
             />
 
             <div className="flex flex-col items-start gap-5">

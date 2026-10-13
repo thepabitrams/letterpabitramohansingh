@@ -3,15 +3,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import {
-  FaArrowRight,
-  FaCode,
+  FaArrowLeft,
+  FaArrowUpRightFromSquare,
   FaGithub,
-  FaHeart,
-  FaMagic,
-  FaShareAlt,
-} from 'react-icons/fa'
+} from 'react-icons/fa6'
 import { Footer, Header } from '../core/components/layout'
-import { Container, LoginModal } from '../core/components/ui'
+import { LoginModal } from '../core/components/ui'
 import { PageMeta } from '../core/seo/PageMeta'
 import { buildAboutPageSchema } from '../core/seo/structured-data'
 import {
@@ -47,36 +44,6 @@ function normalizeUser(value: unknown): User | null {
     image: typeof value.image === 'string' ? value.image : undefined,
   }
 }
-
-const HOW_IT_WORKS_STEPS = [
-  {
-    icon: FaMagic,
-    title: 'Write',
-    description:
-      'Compose your message. Ask a question, add a note, or just say how you feel.',
-  },
-  {
-    icon: FaHeart,
-    title: 'Customize',
-    description:
-      'Pick the background, fonts, effects, and buttons. Make it feel like yours.',
-  },
-  {
-    icon: FaShareAlt,
-    title: 'Share',
-    description:
-      'Send the link. They read it, reply, and after a few days it disappears forever.',
-  },
-] as const
-
-const TECH_STACK = [
-  'React 19',
-  'TypeScript',
-  'Cloudflare Workers',
-  'Cloudflare D1',
-  'Tailwind CSS',
-  'Hono',
-] as const
 
 export function About() {
   const [user, setUser] = useState<User | null>(null)
@@ -122,147 +89,112 @@ export function About() {
           onClose={() => setIsLoginModalOpen(false)}
         />
 
-        <main className="py-16 px-4">
-          <Container className="space-y-20">
-            <section className="max-w-3xl mx-auto text-center">
-              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
+        <main className="py-20 px-6">
+          <article className="max-w-2xl mx-auto space-y-14">
+            <header className="space-y-5">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 leading-[1.1] tracking-tight">
                 Some things are worth saying once, then letting go.
               </h1>
-              <p className="mt-6 text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-                {SITE_NAME} lets you write a personal message, make it beautiful,
-                and send it as a link that disappears after a few days. No feed.
-                No likes. No permanence. Just a moment between two people.
+              <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
+                {SITE_NAME} is a small place on the internet where you can write
+                one message to one person, make it beautiful, send it as a link,
+                and watch it disappear after a few days.
               </p>
-            </section>
+            </header>
 
-            <section className="max-w-3xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <section className="space-y-5">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
                 Why I built this
               </h2>
-              <div className="mt-6 space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+              <div className="space-y-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
-                  Digital messages today feel disposable. We send hundreds a day,
-                  and they pile up in inboxes nobody opens. The things that
-                  matter get lost in the noise.
+                  Digital messages today feel disposable. We send hundreds of
+                  them a day, and they pile up in inboxes nobody opens. The
+                  things that actually matter get lost in the noise.
                 </p>
                 <p>
                   I wanted to build the opposite. A place where you write one
                   message that matters, send it to one person, and know it will
-                  disappear. The impermanence is the point — it makes the
-                  message feel precious.
+                  disappear. The impermanence is the point. It makes you slow
+                  down and think about what you actually want to say.
                 </p>
                 <p>
-                  {SITE_NAME} is free, open source, and has no ads, no tracking,
-                  and no upsells. It exists because I wanted it to exist.
+                  {SITE_NAME} has no feed, no likes, no notifications, no
+                  tracking, no ads, and no upsells. It exists because I wanted
+                  it to exist, and I think other people might want it too.
                 </p>
               </div>
             </section>
 
-            <section className="max-w-4xl mx-auto">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
-                How it works
+            <section className="space-y-5">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                Keep it or let it go
               </h2>
-              <div className="mt-10 grid gap-6 md:grid-cols-3">
-                {HOW_IT_WORKS_STEPS.map((step, index) => {
-                  const Icon = step.icon
-                  return (
-                    <div
-                      key={step.title}
-                      className="p-6 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm"
-                    >
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center justify-center w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
-                          <Icon size={18} aria-hidden="true" />
-                        </span>
-                        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                          Step {index + 1}
-                        </span>
-                      </div>
-                      <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {step.title}
-                      </h3>
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                        {step.description}
-                      </p>
-                    </div>
-                  )
-                })}
-              </div>
-            </section>
-
-            <section className="max-w-3xl mx-auto">
-              <div className="flex items-center gap-3">
-                <FaCode
-                  size={20}
-                  className="text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                />
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  Built with
-                </h2>
-              </div>
-              <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-                {SITE_NAME} runs on modern, edge-first infrastructure. Pages
-                render fast, data stays private, and the whole thing costs
-                almost nothing to run.
-              </p>
-              <ul className="mt-6 flex flex-wrap gap-2">
-                {TECH_STACK.map((tech) => (
-                  <li
-                    key={tech}
-                    className="px-3 py-1.5 rounded-full text-xs font-medium bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-800"
-                  >
-                    {tech}
-                  </li>
-                ))}
-              </ul>
-            </section>
-
-            <section className="max-w-3xl mx-auto">
-              <div className="p-8 rounded-2xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Open source
-                </h2>
-                <p className="mt-4 text-gray-700 dark:text-gray-300 leading-relaxed">
-                  The entire codebase is public. Read it, fork it, learn from it,
-                  or run your own version. {SITE_NAME} will always be free and
-                  always be open.
+              <div className="space-y-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>
+                  When someone replies, both of you can see what was said. From
+                  there, you each have the same choice: save it as an image or
+                  as a standalone HTML file, or let it stay where it is.
                 </p>
-                <a
-                  href={SOCIALS.github}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition"
-                >
-                  <FaGithub aria-hidden="true" />
-                  View on GitHub
-                </a>
+                <p>
+                  Either way, the letter and the reply are removed from the
+                  server after the expiry period. What you save on your device
+                  is yours. What you don't save, disappears.
+                </p>
               </div>
             </section>
 
-            <section className="max-w-3xl mx-auto text-center">
-              <p className="text-sm text-gray-500 dark:text-gray-500">
-                Built by{' '}
-                <a
-                  href={PORTFOLIO_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition"
-                >
-                  {AUTHOR_NAME}
-                </a>
-              </p>
-              <div className="mt-6">
+            <section className="space-y-5">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                Free and open source
+              </h2>
+              <div className="space-y-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                <p>
+                  The entire codebase is public. Read it, fork it, learn from
+                  it, or run your own version. {SITE_NAME} will always be free
+                  and always be open.
+                </p>
+              </div>
+              <a
+                href={SOCIALS.github}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+              >
+                <FaGithub size={16} aria-hidden="true" />
+                View the source on GitHub
+              </a>
+            </section>
+
+            <footer className="pt-10 border-t border-gray-200 dark:border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <Link
                   to="/"
-                  className="inline-flex items-center gap-2 px-6 py-3 text-sm rounded-xl border border-blue-600 bg-blue-600 text-white hover:bg-blue-700 dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600 font-medium transition"
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 >
-                  Write your first letter
-                  <FaArrowRight size={14} aria-hidden="true" />
+                  <FaArrowLeft size={12} aria-hidden="true" />
+                  <span>Write a letter</span>
                 </Link>
+
+                <p className="text-sm text-gray-500 dark:text-gray-500">
+                  Built by{' '}
+                  <a
+                    href={PORTFOLIO_URL}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="inline-flex items-baseline gap-1.5 font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                  >
+                    <span>{AUTHOR_NAME}</span>
+                    <FaArrowUpRightFromSquare
+                      size={10}
+                      className="text-gray-400 dark:text-gray-500"
+                      aria-hidden="true"
+                    />
+                  </a>
+                </p>
               </div>
-            </section>
-          </Container>
+            </footer>
+          </article>
         </main>
 
         <Footer />
