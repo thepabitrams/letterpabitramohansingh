@@ -1,4 +1,4 @@
-// src/core/components/ui/Button.tsx 
+// src/core/components/ui/Button.tsx
 type ButtonVariant = 'primary' | 'outline' | 'ghost' | 'active'
 type ButtonSize = 'sm' | 'md' | 'lg'
 
@@ -13,10 +13,10 @@ type ButtonProps = {
 }
 
 const BUTTON_VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700',
-  outline: 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50',
-  ghost: 'border-transparent text-gray-500 hover:text-gray-700',
-  active: 'border-blue-600 bg-blue-50 text-blue-700',
+  primary: 'border-blue-600 bg-blue-600 text-white hover:bg-blue-700 dark:border-blue-500 dark:bg-blue-500 dark:hover:bg-blue-600',
+  outline: 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-800',
+  ghost: 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+  active: 'border-blue-600 bg-blue-50 text-blue-700 dark:border-blue-500 dark:bg-blue-950 dark:text-blue-300',
 }
 
 const BUTTON_SIZES: Record<ButtonSize, string> = {

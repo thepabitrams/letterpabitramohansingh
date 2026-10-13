@@ -1,4 +1,4 @@
-// src/pages/Home.tsx 
+// src/pages/Home.tsx
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { FaCheck, FaCopy } from 'react-icons/fa'
@@ -171,14 +171,14 @@ export function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 transition-colors">
+        <div className="text-gray-500 dark:text-gray-400">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
       <Header
         user={user}
         onLoginClick={() => setIsLoginModalOpen(true)}
@@ -218,21 +218,21 @@ export function Home() {
             </Button>
 
             {errorMessage && (
-              <p className="mt-4 text-sm text-red-600">{errorMessage}</p>
+              <p className="mt-4 text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
             )}
 
             {generatedLink && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-6 p-5 bg-blue-50 border border-blue-200 rounded-xl max-w-2xl mx-auto"
+                className="mt-6 p-5 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-900 rounded-xl max-w-2xl mx-auto"
               >
-                <p className="text-sm text-blue-800 font-medium mb-3">
+                <p className="text-sm text-blue-800 dark:text-blue-300 font-medium mb-3">
                   Your link is ready
                 </p>
 
-                <div className="flex items-center gap-2 bg-white rounded-lg border border-blue-100 p-2">
-                  <code className="flex-1 text-xs break-all text-left px-2 py-1">
+                <div className="flex items-center gap-2 bg-white dark:bg-gray-900 rounded-lg border border-blue-100 dark:border-blue-900 p-2">
+                  <code className="flex-1 text-xs break-all text-left px-2 py-1 text-gray-800 dark:text-gray-200">
                     {generatedLink}
                   </code>
 

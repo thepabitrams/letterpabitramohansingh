@@ -28,7 +28,7 @@ export interface LetterExportData {
   messageBoxAnimation: string
 }
 
-export function generateStandaloneHTML(letterData: LetterExportData): string {
+export function generateStandaloneHtml(letterData: LetterExportData): string {
   const backgroundVariant = getBackgroundVariant(letterData.background)
   const backgroundAnimationConfig = letterData.backgroundAnimation
     ? getBackgroundAnimation(letterData.backgroundAnimation)

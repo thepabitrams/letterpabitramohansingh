@@ -1,4 +1,4 @@
-// src/core/components/ui/TextArea.tsx 
+// src/core/components/ui/TextArea.tsx
 type TextAreaProps = {
   label?: string
   value: string
@@ -17,7 +17,7 @@ export function TextArea({
   return (
     <div>
       {label && (
-        <label className="text-xs font-medium text-gray-500 block mb-2">
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">
           {label}
         </label>
       )}
@@ -26,7 +26,7 @@ export function TextArea({
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         style={{ minHeight: rows * 24 + 60 }}
-        className="w-full p-4 border border-gray-200 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 leading-relaxed"
+        className="w-full p-4 border border-gray-200 dark:border-gray-700 rounded-xl text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 leading-relaxed transition-colors"
       />
     </div>
   )

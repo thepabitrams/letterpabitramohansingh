@@ -1,4 +1,4 @@
-/* src/letter/editor/Preview.tsx */
+// src/letter/editor/Preview.tsx
 import { PATTERNS, type PatternId } from '../patterns'
 
 interface ButtonConfig {
@@ -55,7 +55,7 @@ export function Preview({
   }>
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 bg-white flex">
+    <div className="rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 flex transition-colors">
       <div className="flex-1 flex">
         <PatternComponent
           config={{

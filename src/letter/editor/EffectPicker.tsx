@@ -73,7 +73,7 @@ export function EffectPicker({
       </div>
 
       {optionDefinitions.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
+        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 space-y-3">
           <div className={hideLabels ? 'opacity-40 pointer-events-none space-y-3' : 'space-y-3'}>
             {optionDefinitions.map((option) => (
               <Input
@@ -94,15 +94,15 @@ export function EffectPicker({
               className="peer sr-only"
             />
             <span
-              className="w-4 h-4 rounded-[5px] border border-gray-200 bg-white transition
-                peer-checked:bg-gray-900 peer-checked:border-gray-900
+              className="w-4 h-4 rounded-[5px] border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 transition
+                peer-checked:bg-gray-900 dark:peer-checked:bg-white peer-checked:border-gray-900 dark:peer-checked:border-white
                 peer-focus-visible:ring-2 peer-focus-visible:ring-gray-900/20 peer-focus-visible:ring-offset-1
                 flex items-center justify-center"
             >
               <svg
                 viewBox="0 0 12 12"
                 fill="none"
-                className={`w-2.5 h-2.5 text-white transition-opacity ${
+                className={`w-2.5 h-2.5 text-white dark:text-gray-900 transition-opacity ${
                   hideLabels ? 'opacity-100' : 'opacity-0'
                 }`}
               >
@@ -115,7 +115,7 @@ export function EffectPicker({
                 />
               </svg>
             </span>
-            <span className="text-sm text-gray-600 group-hover:text-gray-900 transition">
+            <span className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition">
               Hide names on effect
             </span>
           </label>

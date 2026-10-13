@@ -1,4 +1,4 @@
-// src/core/components/ui/Input.tsx 
+// src/core/components/ui/Input.tsx
 type InputProps = {
   label?: string
   value: string
@@ -17,7 +17,7 @@ export function Input({
   return (
     <div className={className}>
       {label && (
-        <label className="text-xs font-medium text-gray-500 block mb-2">
+        <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">
           {label}
         </label>
       )}
@@ -25,7 +25,7 @@ export function Input({
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
-        className="w-full p-3.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
+        className="w-full p-3.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 transition-colors"
       />
     </div>
   )

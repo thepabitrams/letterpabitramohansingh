@@ -99,7 +99,7 @@ export function ButtonPicker({
   return (
     <Accordion title="Buttons" subtitle={accordionSubtitle}>
       {availableTabs.length > 1 && (
-        <div className="flex gap-2 mb-5 bg-gray-100 p-1 rounded-xl">
+        <div className="flex gap-2 mb-5 bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
           {availableTabs.map((tabEntry) => (
             <button
               key={tabEntry.id}
@@ -107,8 +107,8 @@ export function ButtonPicker({
               onClick={() => setActiveTab(tabEntry.id)}
               className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition ${
                 activeTab === tabEntry.id
-                  ? 'bg-white text-gray-900 shadow-sm'
-                  : 'text-gray-500'
+                  ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+                  : 'text-gray-500 dark:text-gray-400'
               }`}
             >
               {tabEntry.label}
@@ -126,7 +126,7 @@ export function ButtonPicker({
         />
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-2">Color</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">Color</label>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(COLORS) as ColorKey[]).map((colorKey) => (
               <button
@@ -135,8 +135,8 @@ export function ButtonPicker({
                 onClick={() => updateConfig('color', colorKey)}
                 className={`w-8 h-8 rounded-full border-2 transition ${
                   currentConfig.color === colorKey
-                    ? 'border-gray-900 scale-110'
-                    : 'border-gray-200 hover:scale-105'
+                    ? 'border-gray-900 dark:border-white scale-110'
+                    : 'border-gray-200 dark:border-gray-700 hover:scale-105'
                 }`}
                 style={{ backgroundColor: COLORS[colorKey].hex }}
                 aria-label={colorKey}
@@ -146,7 +146,7 @@ export function ButtonPicker({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-2">Shape</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">Shape</label>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(SHAPES) as ShapeKey[]).map((shapeKey) => (
               <Button
@@ -161,7 +161,7 @@ export function ButtonPicker({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-2">Size</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">Size</label>
           <div className="flex flex-wrap gap-2">
             {(Object.keys(SIZES) as SizeKey[]).map((sizeKey) => (
               <Button
@@ -176,7 +176,7 @@ export function ButtonPicker({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-2">Variant</label>
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">Variant</label>
           <div className="flex flex-wrap gap-2">
             {BUTTON_VARIANTS.map((entry) => (
               <Button
@@ -191,7 +191,7 @@ export function ButtonPicker({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-gray-500 block mb-2">
+          <label className="text-xs font-medium text-gray-500 dark:text-gray-400 block mb-2">
             {isTriggerAnimationTab ? 'Animation (Trigger)' : 'Animation (Motion)'}
           </label>
           <div className="flex flex-wrap gap-2">
