@@ -1,14 +1,6 @@
 // src/pages/HowItWorks.tsx
 
-import {
-  FaArrowUpRightFromSquare,
-  FaEnvelope,
-  FaGoogle,
-  FaLayerGroup,
-  FaLink,
-  FaPen,
-  FaWandMagicSparkles,
-} from 'react-icons/fa6'
+import { FaArrowUpRightFromSquare } from 'react-icons/fa6'
 import { Footer, Header } from '../core/components/layout'
 import { PageMeta } from '../core/seo/PageMeta'
 import {
@@ -19,37 +11,31 @@ import {
 
 const WRITING_STEPS = [
   {
-    icon: FaGoogle,
     title: 'Sign in with Google',
     description:
       'One quick sign-in and you are in. No email forms, no passwords to remember. Google handles the security so we never see your credentials.',
   },
   {
-    icon: FaLayerGroup,
     title: 'Pick your letter style',
     description:
       'Choose between three patterns. Two Choice gives your recipient a Yes/No pair of buttons. One Choice gives them a single button. Note Only skips buttons entirely — just a reply field.',
   },
   {
-    icon: FaPen,
     title: 'Write who it is from and who it is for',
     description:
       'Two names. Both appear on the letter and in the animations, so the letter feels like it was made specifically for that person.',
   },
   {
-    icon: FaEnvelope,
     title: 'Write your message',
     description:
       'This is the actual letter. Say what you want to say. Ask a question. Tell them how you feel. There is no character limit pushing you to rush.',
   },
   {
-    icon: FaWandMagicSparkles,
     title: 'Make it yours',
     description:
       'Change the background, fonts, effects, and button style. Every section is editable, so the letter looks the way you want it to feel.',
   },
   {
-    icon: FaLink,
     title: 'Get your link',
     description:
       'Generate a link and send it to the person you wrote it for. That link is the letter — anyone who opens it can read it, reply to it, and save a copy.',
@@ -86,29 +72,19 @@ export function HowItWorks() {
             </header>
 
             <section className="space-y-10">
-              {WRITING_STEPS.map((step, index) => {
-                const Icon = step.icon
-                return (
-                  <div key={step.title} className="flex gap-5">
-                    <div className="shrink-0">
-                      <span className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
-                        <Icon size={20} aria-hidden="true" />
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
-                        Step {index + 1}
-                      </p>
-                      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        {step.title}
-                      </h2>
-                      <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
-                        {step.description}
-                      </p>
-                    </div>
-                  </div>
-                )
-              })}
+              {WRITING_STEPS.map((step, index) => (
+                <div key={step.title} className="space-y-2">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">
+                    Step {index + 1}
+                  </p>
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                    {step.title}
+                  </h2>
+                  <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed">
+                    {step.description}
+                  </p>
+                </div>
+              ))}
             </section>
 
             <section className="space-y-5">
@@ -163,15 +139,33 @@ export function HowItWorks() {
               </h2>
               <div className="space-y-5 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
-                  A new letter stays on the server for its full expiry period —
-                  seven days by default. Once the recipient opens it, the clock
-                  shortens to half that time. So the sooner they open it, the
-                  shorter its remaining life.
+                  Letters do not live forever. Each interaction shortens the
+                  remaining life, so the faster it moves through the moments,
+                  the sooner it disappears:
                 </p>
+                <ul className="list-disc list-inside space-y-2 ml-2">
+                  <li>
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      Just created
+                    </strong>{' '}
+                    — lives 7 days
+                  </li>
+                  <li>
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      Opened for the first time
+                    </strong>{' '}
+                    — shortened to 3.5 days
+                  </li>
+                  <li>
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      Replied to
+                    </strong>{' '}
+                    — shortened to 1.75 days
+                  </li>
+                </ul>
                 <p>
-                  If the storage is running low, the oldest active letters are
-                  deleted first to make room. Letters that have already expired
-                  are cleaned up automatically.
+                  This keeps storage small, frees capacity for new letters, and
+                  matches the impermanence at the heart of the product.
                 </p>
                 <p>
                   This is why saving a copy matters. What you download to your

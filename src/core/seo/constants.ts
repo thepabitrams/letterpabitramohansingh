@@ -4,7 +4,7 @@ export const SITE_URL = 'https://letters.pabitramohansingh.com'
 export const SITE_NAME = 'Letters'
 export const SITE_TAGLINE = 'Beautiful, self-destructing letters for the people who matter.'
 export const AUTHOR_NAME = 'Pabitra Mohan Singh'
-export const CONTACT_EMAIL = 'supportpabitrams@gmail.com'
+export const CONTACT_EMAIL = 'support@pabitramohansingh.com'
 export const PORTFOLIO_URL = 'https://pabitramohansingh.com'
 export const OG_IMAGE_URL = `${SITE_URL}/og-image.png`
 

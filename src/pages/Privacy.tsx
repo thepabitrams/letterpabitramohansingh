@@ -221,30 +221,61 @@ export function Privacy() {
                   <strong className="font-semibold text-gray-900 dark:text-gray-100">
                     Letters and replies
                   </strong>{' '}
-                  are automatically deleted from the servers after their expiry
-                  period. By default, this is seven (7) days from the time of
-                  creation.
+                  are automatically deleted from the servers on a progressive
+                  schedule. This is intentional — it keeps storage small, frees
+                  capacity for new letters, and matches the ephemeral nature of
+                  the product.
+                </p>
+                <ul className="list-disc list-inside space-y-2 ml-2">
+                  <li>
+                    A new letter lives for{' '}
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      seven (7) days
+                    </strong>{' '}
+                    from the time it was created.
+                  </li>
+                  <li>
+                    When the recipient opens the letter for the first time, the
+                    remaining life is shortened to{' '}
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      three and a half (3.5) days
+                    </strong>{' '}
+                    from creation.
+                  </li>
+                  <li>
+                    When the recipient replies, the remaining life is shortened
+                    again to{' '}
+                    <strong className="font-semibold text-gray-900 dark:text-gray-100">
+                      one and three-quarters (1.75) days
+                    </strong>{' '}
+                    from creation.
+                  </li>
+                </ul>
+                <p>
+                  Whichever of these points is reached first, the letter and its
+                  reply are removed from the server. If you want to keep a
+                  letter, download it as an image or HTML file before it expires.
                 </p>
                 <p>
                   <strong className="font-semibold text-gray-900 dark:text-gray-100">
                     Account information
                   </strong>{' '}
-                  (name, email, profile picture) is retained until you request
-                  deletion of your account. You can request deletion at any time
-                  by emailing me.
+                  (name, email, profile picture) is deleted automatically once
+                  you have no active letters, no active sessions, and your
+                  account is more than one day old. You can also request
+                  deletion at any time by emailing me.
                 </p>
                 <p>
                   <strong className="font-semibold text-gray-900 dark:text-gray-100">
                     Session records
                   </strong>{' '}
                   (including IP address and user agent) are deleted when your
-                  session expires or when you sign out. Active sessions are also
-                  removed when your account is deleted.
+                  session expires, or when you sign out.
                 </p>
                 <p>
-                  When you request account deletion, I will delete your account
-                  information within 30 days, except where required by law to
-                  retain certain data.
+                  When your account is deleted, all associated data is removed
+                  automatically. Some data may be retained briefly for backup or
+                  legal purposes, but never longer than necessary.
                 </p>
               </div>
             </section>
