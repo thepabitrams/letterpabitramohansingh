@@ -6,7 +6,7 @@
 
 - [Home](https://letters.pabitramohansingh.com/): Create and send personalized letters
 - [About](https://letters.pabitramohansingh.com/about): What Letters is, why it exists, and who built it
-- [How It Works](https://letters.pabitramohansingh.com/how-it-works): Three steps to send a letter
+- [How It Works](https://letters.pabitramohansingh.com/how-it-works): Six steps to write and send a letter
 - [Contact](https://letters.pabitramohansingh.com/contact): Get in touch with the developer
 - [Privacy Policy](https://letters.pabitramohansingh.com/privacy): How we handle your data
 - [Terms of Service](https://letters.pabitramohansingh.com/terms): Rules for using Letters

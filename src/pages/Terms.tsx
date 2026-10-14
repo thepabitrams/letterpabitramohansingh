@@ -1,83 +1,45 @@
 // src/pages/Terms.tsx
 
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router'
-import { FaArrowLeft } from 'react-icons/fa6'
+import { FaArrowUpRightFromSquare } from 'react-icons/fa6'
 import { Footer, Header } from '../core/components/layout'
-import { LoginModal } from '../core/components/ui'
 import { PageMeta } from '../core/seo/PageMeta'
-import { AUTHOR_NAME, CONTACT_EMAIL, SITE_NAME } from '../core/seo/constants'
-import { authClient } from '../core/lib/auth-client'
-import { getMe } from '../core/lib/api'
-
-interface User {
-  id: string
-  name: string
-  email: string
-  image?: string | undefined
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null
-}
-
-function normalizeUser(value: unknown): User | null {
-  if (!isRecord(value)) return null
-  if (typeof value.id !== 'string') return null
-  if (typeof value.name !== 'string') return null
-  if (typeof value.email !== 'string') return null
-
-  return {
-    id: value.id,
-    name: value.name,
-    email: value.email,
-    image: typeof value.image === 'string' ? value.image : undefined,
-  }
-}
+import {
+  AUTHOR_NAME,
+  CONTACT_EMAIL,
+  PORTFOLIO_URL,
+  SITE_NAME,
+  SITE_URL,
+} from '../core/seo/constants'
 
 const LAST_UPDATED = 'October 14, 2026'
 
+const termsPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: `Terms of Service — ${SITE_NAME}`,
+  url: `${SITE_URL}/terms`,
+  description: `The rules for using ${SITE_NAME}, a free tool for sending self-destructing letters.`,
+  publisher: {
+    '@type': 'Person',
+    name: AUTHOR_NAME,
+  },
+}
+
 export function Terms() {
-  const [user, setUser] = useState<User | null>(null)
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-
-  useEffect(() => {
-    let isCancelled = false
-
-    getMe()
-      .then((userData) => {
-        if (!isCancelled) setUser(normalizeUser(userData))
-      })
-      .catch(() => {})
-
-    return () => {
-      isCancelled = true
-    }
-  }, [])
-
-  const handleLogout = async (): Promise<void> => {
-    await authClient.signOut()
-    setUser(null)
-  }
-
   return (
     <>
       <PageMeta
         title="Terms of Service"
         description={`The rules for using ${SITE_NAME}, a free tool for sending self-destructing letters.`}
         path="/terms"
+        structuredData={termsPageSchema}
       />
 
       <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
         <Header
-          user={user}
-          onLoginClick={() => setIsLoginModalOpen(true)}
-          onLogout={handleLogout}
-        />
-
-        <LoginModal
-          open={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
+          user={null}
+          onLoginClick={() => {}}
+          onLogout={() => {}}
         />
 
         <main className="py-20 px-6">
@@ -104,7 +66,7 @@ export function Terms() {
                   {SITE_NAME} is a free tool for writing and sending personal,
                   self-destructing letters over the web. You write a message,
                   customize how it looks, and share a link. After an expiry
-                  period, the letter is removed from our servers.
+                  period, the letter is removed from the servers.
                 </p>
                 <p>
                   {SITE_NAME} is operated by {AUTHOR_NAME} as a personal
@@ -133,19 +95,19 @@ export function Terms() {
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>You agree not to use {SITE_NAME} to:</p>
                 <ul className="list-disc list-inside space-y-2 ml-2">
-                  <li>Send threats, harassment, or abuse to anyone.</li>
-                  <li>Share illegal content of any kind.</li>
+                  <li>Send threats, harassment, or abuse to anyone</li>
+                  <li>Share illegal content of any kind</li>
                   <li>
-                    Impersonate another person or misrepresent your identity.
+                    Impersonate another person or misrepresent your identity
                   </li>
                   <li>
                     Attempt to disrupt, overload, or reverse-engineer the
-                    service.
+                    service
                   </li>
-                  <li>Use the service for spam or bulk unsolicited messages.</li>
+                  <li>Use the service for spam or bulk unsolicited messages</li>
                 </ul>
                 <p>
-                  We reserve the right to remove any content and terminate any
+                  I reserve the right to remove any content and terminate any
                   account that violates these rules, without notice.
                 </p>
               </div>
@@ -158,7 +120,7 @@ export function Terms() {
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
                   You own the letters you write. By using {SITE_NAME}, you grant
-                  us permission to store and display your letters so we can
+                  me permission to store and display your letters so I can
                   deliver them to the person you sent them to. This permission
                   ends when the letter is deleted.
                 </p>
@@ -172,12 +134,12 @@ export function Terms() {
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
                   {SITE_NAME} is provided &ldquo;as is&rdquo; and &ldquo;as
-                  available.&rdquo; We do not guarantee that the service will be
+                  available.&rdquo; I do not guarantee that the service will be
                   uninterrupted, error-free, or that letters will always be
                   delivered on time.
                 </p>
                 <p>
-                  We may modify, suspend, or discontinue the service at any time
+                  I may modify, suspend, or discontinue the service at any time
                   without notice.
                 </p>
               </div>
@@ -204,7 +166,7 @@ export function Terms() {
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
                   You can stop using {SITE_NAME} at any time. You can request
-                  deletion of your account by emailing us. We may also terminate
+                  deletion of your account by emailing me. I may also terminate
                   or suspend your access if you violate these terms.
                 </p>
               </div>
@@ -228,10 +190,10 @@ export function Terms() {
               </h2>
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
-                  We may update these terms from time to time. When we do, we
-                  will update the &ldquo;Last updated&rdquo; date at the top of
-                  this page. Continued use of {SITE_NAME} after changes means
-                  you accept the updated terms.
+                  I may update these terms from time to time. When I do, I will
+                  update the &ldquo;Last updated&rdquo; date at the top of this
+                  page. Continued use of {SITE_NAME} after changes means you
+                  accept the updated terms.
                 </p>
               </div>
             </section>
@@ -242,7 +204,7 @@ export function Terms() {
               </h2>
               <div className="space-y-4 text-base text-gray-700 dark:text-gray-300 leading-relaxed">
                 <p>
-                  For any questions about these terms, contact us at{' '}
+                  For any questions about these terms, contact me at{' '}
                   <a
                     href={`mailto:${CONTACT_EMAIL}`}
                     className="font-medium text-gray-900 dark:text-gray-100 underline hover:no-underline"
@@ -255,13 +217,39 @@ export function Terms() {
             </section>
 
             <footer className="pt-10 border-t border-gray-200 dark:border-gray-800">
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-              >
-                <FaArrowLeft size={12} aria-hidden="true" />
-                <span>Back to home</span>
-              </Link>
+              <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-base">
+                <a
+                  href="/"
+                  className="inline-flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  <span>Letters</span>
+                  <FaArrowUpRightFromSquare
+                    size={12}
+                    className="text-gray-400 dark:text-gray-500"
+                    aria-hidden="true"
+                  />
+                </a>
+
+                <span className="text-gray-400 dark:text-gray-500">·</span>
+
+                <span className="text-gray-500 dark:text-gray-500">
+                  Built by
+                </span>
+
+                <a
+                  href={PORTFOLIO_URL}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex items-center gap-2 font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                >
+                  <span>{AUTHOR_NAME}</span>
+                  <FaArrowUpRightFromSquare
+                    size={12}
+                    className="text-gray-400 dark:text-gray-500"
+                    aria-hidden="true"
+                  />
+                </a>
+              </div>
             </footer>
           </article>
         </main>
