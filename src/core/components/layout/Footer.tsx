@@ -109,16 +109,16 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
             </a>
           </div>
 
-          <div className="flex flex-row items-center justify-center md:justify-end gap-6">
+          <div className="flex flex-row items-center justify-center md:justify-end gap-10 sm:gap-8 md:gap-10">
             <img
               src="/icon/pabitra-avatar-suit-black.svg"
               alt="Pabitra Mohan Singh"
-              className="w-40 h-40 shrink-0 dark:hidden"
+              className="w-32 h-32 sm:w-40 sm:h-40 shrink-0 dark:hidden"
             />
             <img
               src="/icon/pabitra-avatar-suit-white.svg"
               alt="Pabitra Mohan Singh"
-              className="w-40 h-40 shrink-0 hidden dark:block"
+              className="w-32 h-32 sm:w-40 sm:h-40 shrink-0 hidden dark:block"
             />
 
             <div className="flex flex-col items-start gap-5">
@@ -147,7 +147,7 @@ export function Footer({ actions }: FooterProps): React.ReactElement {
                 target="_blank"
                 rel="noreferrer noopener"
                 aria-label={`${AUTHOR_NAME} portfolio (opens in new tab)`}
-                className="inline-flex items-center gap-2 text-base font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:underline"
+                className="inline-flex items-center gap-2 text-base font-semibold text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors focus:outline-none focus-visible:underline whitespace-nowrap"
               >
                 <span>{AUTHOR_NAME}</span>
                 <FaArrowUpRightFromSquare
