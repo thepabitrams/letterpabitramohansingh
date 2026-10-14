@@ -34,9 +34,12 @@ https://github.com/user-attachments/assets/803541b0-8d63-4b02-b1ee-b26405718f01
 - **Interactive patterns** – Two Choice, One Choice, Note Only
 - **Motion effects** – hearts, confetti, snow, fireworks, petals, sparkles, and more
 - **Google authentication** – secure sign-in via Better Auth
-- **Auto-expiry** – letters delete themselves after a set number of days
+- **Progressive expiry** – letters live 7 days, then 3.5 days after being opened, then 1.75 days after a reply
+- **Live link check** – real-time validation tells you if a letter name is available
+- **Storage-aware cleanup** – oldest letters auto-delete when storage runs high
 - **Downloadable exports** – save letters as PNG or standalone HTML
 - **Edge-deployed** – runs on Cloudflare Workers globally
+- **SEO-ready** – structured data, sitemap, robots.txt built in
 - **TypeScript** – end-to-end strict type checking
 - **Fully responsive** – mobile-first layout with Tailwind CSS
 
@@ -65,7 +68,7 @@ Both must look identical. The `letter/` folder holds every variant, animation, a
 
 ### Core Layers
 
-- **`src/pages/`** – Route pages (Home, LetterView)
+- **`src/pages/`** – Route pages (Home, LetterView, About, HowItWorks, Contact, Privacy, Terms)
 - **`src/letter/`** – Letter rendering system (variants, animations, patterns, editor)
 - **`src/core/`** – Shared infrastructure
   - `components/` – Reusable UI components
@@ -83,7 +86,7 @@ pages → letter → core → db
 ### Prerequisites
 
 - Node.js 22.x
-- PNPM 10.x
+- PNPM 12.x
 - Cloudflare account (for deployment)
 - Google OAuth credentials (for sign-in)
 
@@ -113,8 +116,8 @@ GOOGLE_CLIENT_SECRET=<your-client-secret>
 Generate and apply Drizzle migrations locally:
 
 ```bash
-npx drizzle-kit generate
-pnpm wrangler d1 migrations apply letters-db --local
+pnpm exec drizzle-kit generate
+pnpm exec wrangler d1 migrations apply letters-db --local
 ```
 
 ### Development
@@ -134,8 +137,7 @@ pnpm build
 ### Manual Deploy
 
 ```bash
-pnpm build
-pnpm wrangler deploy
+pnpm deploy
 ```
 
 ## Deployment
@@ -146,8 +148,8 @@ Production deployment is automated via Cloudflare Workers Builds.
 |---|---|
 | Production branch | `main` |
 | Build command | `pnpm run build` |
-| Deploy command | `pnpm wrangler deploy` |
-| Preview command | `pnpm wrangler versions upload` |
+| Deploy command | `pnpm deploy` |
+| Preview command | `pnpm exec wrangler versions upload` |
 
 Push to `main` triggers a production deploy to `letters.pabitramohansingh.com`. Pushes to any other branch create preview versions.
 
@@ -156,9 +158,9 @@ Push to `main` triggers a production deploy to `letters.pabitramohansingh.com`. 
 Set once via Wrangler:
 
 ```bash
-pnpm wrangler secret put BETTER_AUTH_SECRET
-pnpm wrangler secret put GOOGLE_CLIENT_ID
-pnpm wrangler secret put GOOGLE_CLIENT_SECRET
+pnpm exec wrangler secret put BETTER_AUTH_SECRET
+pnpm exec wrangler secret put GOOGLE_CLIENT_ID
+pnpm exec wrangler secret put GOOGLE_CLIENT_SECRET
 ```
 
 ### Cloudflare Bindings
@@ -174,7 +176,10 @@ src/
 ├── core/                # Shared infrastructure
 │   ├── components/      # Reusable UI
 │   ├── export/          # HTML + image export
-│   └── lib/             # Utilities
+│   ├── lib/             # Utilities
+│   ├── seo/             # SEO system
+│   └── worker/          # Cloudflare Worker
+├── db/                  # Drizzle schema + client
 ├── letter/              # Letter rendering system
 │   ├── background/      # Colors + animations
 │   ├── button/          # Button styles + animations
