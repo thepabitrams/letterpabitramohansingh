@@ -1,6 +1,7 @@
 // src/App.tsx
 
 import { BrowserRouter, Routes, Route } from 'react-router'
+import { ScrollToTop } from './core/components/layout/ScrollToTop'
 import { Home } from './pages/Home'
 import { About } from './pages/About'
 import { HowItWorks } from './pages/HowItWorks'
@@ -12,6 +13,7 @@ import { LetterView } from './pages/LetterView'
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
