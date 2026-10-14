@@ -14,12 +14,14 @@
 
 https://github.com/user-attachments/assets/511f4a6b-9e65-4f30-8ef9-7970ad271a93
 
-### Screenshots
+### Desktop
 
 <p align="center">
   <img src="./assets/desktop-light.webp" alt="Letter editor" width="400" />
   <img src="./assets/desktop-dark.webp" alt="Letter view" width="400" />
 </p>
+
+### Mobile
 
 <p align="center">
   <img src="./assets/mobile-light.webp" alt="Mobile editor" width="220" />
