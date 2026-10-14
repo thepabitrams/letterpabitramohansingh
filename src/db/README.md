@@ -166,7 +166,7 @@ WHERE created_at < (strftime('%s', 'now') - 86400)
   AND NOT EXISTS (SELECT 1 FROM session WHERE session.user_id = user.id);
 ```
 
-### File structure
+## File structure
 
 ```text
 src/core/db/
