@@ -151,7 +151,7 @@ Production deployment is automated via Cloudflare Workers Builds.
 |---|---|
 | Production branch | `main` |
 | Build command | `pnpm run build` |
-| Deploy command | `pnpm deploy` |
+| Deploy command | `pnpm exec wrangler deploy` |
 | Preview command | `pnpm exec wrangler versions upload` |
 
 Push to `main` triggers a production deploy to `letters.pabitramohansingh.com`. Pushes to any other branch create preview versions.
