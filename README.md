@@ -74,6 +74,9 @@ Both must look identical. The `letter/` folder holds every variant, animation, a
   - `components/` – Reusable UI components
   - `export/` – HTML + image export modules
   - `lib/` – Utilities (api, auth-client)
+  - `seo/` – SEO system (PageMeta, structured data, constants)
+  - `worker/` – Cloudflare Worker API + cron cleanup
+- **`src/db/`** – Drizzle schema + client
 
 ### Dependency Flow
 
