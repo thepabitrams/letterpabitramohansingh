@@ -60,7 +60,6 @@ export const letters = sqliteTable('letters', {
   status: text('status').notNull().default('pending'),
   reply: text('reply'),
   replyNote: text('reply_note'),
-  expiryDays: integer('expiry_days').notNull(),
   createdAt: integer('created_at').notNull(),
   openedAt: integer('opened_at'),
   repliedAt: integer('replied_at'),

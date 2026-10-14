@@ -1,14 +1,20 @@
 // src/pages/Home.tsx
 
 import { useEffect, useState } from 'react'
-import { motion } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { FaCheck, FaCopy } from 'react-icons/fa'
 import { Footer, FromTo, Header, Message, Pattern } from '../core/components/layout'
 import { Button, Card, Container, LoginModal } from '../core/components/ui'
 import { Editor } from '../letter/editor'
 import type { PatternId } from '../letter/patterns'
 import { authClient } from '../core/lib/auth-client'
-import { createLetter, getMe } from '../core/lib/api'
+import {
+  createLetter,
+  getMe,
+  checkSlugStatus,
+  type CreateLetterConflictError,
+  type SlugStatus,
+} from '../core/lib/api'
 import { PageMeta } from '../core/seo/PageMeta'
 import { buildHomeSchemaGraph } from '../core/seo/structured-data'
 
@@ -68,6 +74,8 @@ const HOME_PAGE_TITLE = 'Create & Send Beautiful Personalized Messages'
 const HOME_PAGE_DESCRIPTION =
   'Create beautiful personalized letters with Yes/No choices, notes, and romantic messages. Send them to loved ones — they auto-delete after a few days.'
 
+const SLUG_CHECK_DEBOUNCE_MS = 500
+
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message
   return 'Something went wrong'
@@ -93,6 +101,21 @@ function normalizeUser(value: unknown): User | null {
   }
 }
 
+function formatAvailableDate(timestamp: number): string {
+  return new Date(timestamp).toLocaleString('en-US', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  })
+}
+
+function isSlugConflictError(error: unknown): error is CreateLetterConflictError {
+  return (
+    error instanceof Error &&
+    'existingExpiresAt' in error &&
+    typeof (error as CreateLetterConflictError).existingExpiresAt === 'number'
+  )
+}
+
 export function Home() {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -104,6 +127,7 @@ export function Home() {
   const [generatedLink, setGeneratedLink] = useState('')
   const [isCreating, setIsCreating] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const [slugStatus, setSlugStatus] = useState<SlugStatus | null>(null)
   const [letterConfig, setLetterConfig] = useState<LetterConfig>(DEFAULT_LETTER_CONFIG)
   const [isCopied, setIsCopied] = useState(false)
 
@@ -122,6 +146,32 @@ export function Home() {
       isCancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    const trimmedSender = senderName.trim()
+    const trimmedRecipient = recipientName.trim()
+
+    if (!trimmedSender || !trimmedRecipient) {
+      setSlugStatus(null)
+      return
+    }
+
+    let isCancelled = false
+
+    const timerId = setTimeout(async () => {
+      try {
+        const status = await checkSlugStatus(trimmedSender, trimmedRecipient)
+        if (!isCancelled) setSlugStatus(status)
+      } catch {
+        if (!isCancelled) setSlugStatus(null)
+      }
+    }, SLUG_CHECK_DEBOUNCE_MS)
+
+    return () => {
+      isCancelled = true
+      clearTimeout(timerId)
+    }
+  }, [senderName, recipientName])
 
   const handleConfigUpdate = (key: string, value: unknown) => {
     setLetterConfig((previousConfig) => ({ ...previousConfig, [key]: value }))
@@ -150,12 +200,19 @@ export function Home() {
         header: letterConfig.header?.enabled ? letterConfig.header.text : undefined,
         pattern,
         config: letterConfig,
-        expiryDays: 7,
       })
 
       setGeneratedLink(`${window.location.origin}${result.url}`)
     } catch (error: unknown) {
-      setErrorMessage(getErrorMessage(error))
+      if (isSlugConflictError(error)) {
+        setSlugStatus({
+          available: false,
+          existingExpiresAt: error.existingExpiresAt,
+        })
+        setErrorMessage('')
+      } else {
+        setErrorMessage(getErrorMessage(error))
+      }
     } finally {
       setIsCreating(false)
     }
@@ -183,6 +240,8 @@ export function Home() {
       </div>
     )
   }
+
+  const isNameTaken = slugStatus !== null && !slugStatus.available
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors">
@@ -215,6 +274,35 @@ export function Home() {
             setRecipientName={setRecipientName}
           />
 
+          <AnimatePresence initial={false}>
+            {isNameTaken && slugStatus && !slugStatus.available && (
+              <motion.div
+                key="slug-taken"
+                initial={{ opacity: 0, height: 0, y: -12 }}
+                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -12 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="overflow-hidden"
+              >
+                <div className="rounded-2xl border border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950 p-5">
+                  <p className="text-sm font-semibold text-amber-900 dark:text-amber-100">
+                    This letter name is already taken
+                  </p>
+                  <p className="mt-1.5 text-sm text-amber-800 dark:text-amber-200 leading-relaxed">
+                    Someone already used &ldquo;{senderName} → {recipientName}&rdquo;.
+                    Try reversing the names (recipient first) or use a slightly different spelling.
+                  </p>
+                  <p className="mt-3 text-xs text-amber-700 dark:text-amber-300">
+                    The name becomes available again after{' '}
+                    <span className="font-semibold">
+                      {formatAvailableDate(slugStatus.existingExpiresAt)}
+                    </span>.
+                  </p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <Message message={message} setMessage={setMessage} />
 
           <Editor
@@ -227,8 +315,12 @@ export function Home() {
           />
 
           <Card title="Generate" className="text-center">
-            <Button onClick={() => handleGenerateLink()} size="lg" disabled={isCreating}>
-              {isCreating ? 'Creating...' : 'Generate Link'}
+            <Button
+              onClick={() => handleGenerateLink()}
+              size="lg"
+              disabled={isCreating || isNameTaken}
+            >
+              {isCreating ? 'Creating...' : isNameTaken ? 'Name taken' : 'Generate Link'}
             </Button>
 
             {errorMessage && (

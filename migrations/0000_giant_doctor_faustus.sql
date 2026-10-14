@@ -28,7 +28,6 @@ CREATE TABLE `letters` (
 	`status` text DEFAULT 'pending' NOT NULL,
 	`reply` text,
 	`reply_note` text,
-	`expiry_days` integer NOT NULL,
 	`created_at` integer NOT NULL,
 	`opened_at` integer,
 	`replied_at` integer,

@@ -7,7 +7,6 @@ type CreateLetterPayload = {
   header?: string
   pattern: string
   config: unknown
-  expiryDays: number
 }
 
 type CreateLetterResponse = {
@@ -29,7 +28,6 @@ type LetterResponse = {
   status: string
   reply: string | null
   replyNote: string | null
-  expiryDays: number
   createdAt: number
   openedAt: number | null
   repliedAt: number | null
@@ -53,9 +51,61 @@ type UserResponse = {
 
 type ApiError = {
   error?: string
+  existingExpiresAt?: number
 }
 
-export async function createLetter(payload: CreateLetterPayload): Promise<CreateLetterResponse> {
+export type CreateLetterConflictError = Error & {
+  existingExpiresAt: number
+}
+
+export type SlugStatus =
+  | { available: true }
+  | { available: false; existingExpiresAt: number }
+
+async function parseErrorResponse(
+  response: Response,
+  fallbackMessage: string
+): Promise<never> {
+  let errorData: ApiError = {}
+
+  try {
+    errorData = (await response.json()) as ApiError
+  } catch {
+    throw new Error(
+      `Server error (${response.status}). Please try again in a moment.`
+    )
+  }
+
+  if (typeof errorData.existingExpiresAt === 'number') {
+    const conflictError = new Error(
+      errorData.error ?? fallbackMessage
+    ) as CreateLetterConflictError
+    conflictError.existingExpiresAt = errorData.existingExpiresAt
+    throw conflictError
+  }
+
+  throw new Error(errorData.error ?? fallbackMessage)
+}
+
+export async function checkSlugStatus(
+  sender: string,
+  recipient: string
+): Promise<SlugStatus> {
+  const params = new URLSearchParams({ sender, recipient })
+  const response = await fetch(`/api/letters/slug-status?${params}`, {
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    return { available: true }
+  }
+
+  return response.json() as Promise<SlugStatus>
+}
+
+export async function createLetter(
+  payload: CreateLetterPayload
+): Promise<CreateLetterResponse> {
   const response = await fetch('/api/letters', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -64,14 +114,16 @@ export async function createLetter(payload: CreateLetterPayload): Promise<Create
   })
 
   if (!response.ok) {
-    const errorData = (await response.json()) as ApiError
-    throw new Error(errorData.error ?? 'Failed to create letter')
+    await parseErrorResponse(response, 'Failed to create letter')
   }
 
   return response.json() as Promise<CreateLetterResponse>
 }
 
-export async function getLetter(senderSlug: string, recipientSlug: string): Promise<LetterResponse> {
+export async function getLetter(
+  senderSlug: string,
+  recipientSlug: string
+): Promise<LetterResponse> {
   const response = await fetch(`/api/letters/${senderSlug}/${recipientSlug}`, {
     credentials: 'include',
   })
@@ -93,8 +145,7 @@ export async function replyLetter(
   })
 
   if (!response.ok) {
-    const errorData = (await response.json()) as ApiError
-    throw new Error(errorData.error ?? 'Failed to reply')
+    await parseErrorResponse(response, 'Failed to reply')
   }
 
   return response.json() as Promise<ReplyResponse>
