@@ -1,5 +1,3 @@
-// src/core/worker/storage.ts
-
 import { sql } from 'drizzle-orm'
 import { getDb, type Bindings } from '../../db/client'
 import { letters } from '../../db/schema'
@@ -26,7 +24,11 @@ export async function getStoragePressureRatio(environment: Bindings): Promise<nu
   }
 
   const db = getDb(environment)
-  const allLetters = await db.select().from(letters).limit(1000).all()
-  const letterCount = allLetters.length
+  const countResult = await db
+    .select({ value: sql<number>`count(*)` })
+    .from(letters)
+    .get()
+
+  const letterCount = countResult?.value ?? 0
   return letterCount / LETTER_COUNT_THRESHOLD
 }
