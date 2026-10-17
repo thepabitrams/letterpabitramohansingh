@@ -1,38 +1,38 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "letters",
-  "main": "src/core/worker/index.ts",
-  "compatibility_date": "2026-10-01",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ],
-  "workers_dev": false,
-  "preview_urls": false,
-  "observability": {
-    "enabled": true
-  },
-  "assets": {
-    "directory": "./dist/client",
-    "not_found_handling": "single-page-application",
-    "run_worker_first": [
-      "/api/*"
-    ]
-  },
-  "d1_databases": [
-    {
-      "binding": "DB",
-      "database_name": "letters-db",
-      "database_id": "2d1a04b5-aeea-4402-8bc3-a6b893b1946b",
-      "migrations_dir": "migrations",
-      "migrations_pattern": "migrations/*.sql"
-    }
-  ],
-  "triggers": {
-    "crons": [
-      "0 3 * * *"
-    ]
-  },
-  "vars": {
-    "BETTER_AUTH_URL": "https://letters.pabitramohansingh.com"
-  }
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "letters",
+	"main": "src/core/worker/index.ts",
+	"compatibility_date": "2026-10-01",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"workers_dev": false,
+	"preview_urls": false,
+	"observability": {
+		"enabled": true
+	},
+	"assets": {
+		"directory": "./dist/client",
+		"not_found_handling": "single-page-application",
+		"run_worker_first": [
+			"/api/*"
+		]
+	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "letters-db",
+			"database_id": "f1e97e67-dcdd-4e92-8331-bfe7460fb283",
+			"migrations_dir": "migrations",
+			"migrations_pattern": "migrations/*.sql"
+		}
+	],
+	"triggers": {
+		"crons": [
+			"0 3 * * *"
+		]
+	},
+	"vars": {
+		"BETTER_AUTH_URL": "https://letters.pabitramohansingh.com"
+	}
 }
