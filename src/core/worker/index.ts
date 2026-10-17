@@ -1,11 +1,9 @@
-// src/core/worker/index.ts
-
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import type { Bindings } from '../../db/client'
 import type { WorkerEnv } from './types'
 import { ALLOWED_ORIGINS } from './constants'
-import { runNormalCleanup, runStoragePressureCleanup } from './cleanup'
+import { runCleanup } from './cleanup'
 import { handleAuthRequest, attachSessionToContext } from './routes/auth'
 import { userRoutes } from './routes/user'
 import { lettersRoutes } from './routes/letters'
@@ -37,11 +35,6 @@ export default {
     environment: Bindings,
     executionContext: ExecutionContext
   ) {
-    executionContext.waitUntil(
-      (async () => {
-        await runNormalCleanup(environment)
-        await runStoragePressureCleanup(environment)
-      })()
-    )
+    executionContext.waitUntil(runCleanup(environment))
   },
 }

@@ -1,4 +1,3 @@
-// src/core/db/schema.ts 
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 
 export const user = sqliteTable('user', {
@@ -60,8 +59,8 @@ export const letters = sqliteTable('letters', {
   status: text('status').notNull().default('pending'),
   reply: text('reply'),
   replyNote: text('reply_note'),
-  createdAt: integer('created_at').notNull(),
-  openedAt: integer('opened_at'),
-  repliedAt: integer('replied_at'),
-  expiresAt: integer('expires_at').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  openedAt: integer('opened_at', { mode: 'timestamp' }),
+  repliedAt: integer('replied_at', { mode: 'timestamp' }),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
 })

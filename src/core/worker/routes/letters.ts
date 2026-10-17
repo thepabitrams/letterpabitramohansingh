@@ -1,31 +1,35 @@
-// src/core/worker/routes/letters.ts
-
 import { Hono } from 'hono'
 import { count, eq } from 'drizzle-orm'
 import { getDb } from '../../../db/client'
 import { letters, user } from '../../../db/schema'
 import type { WorkerEnv } from '../types'
 import {
-  FULL_LETTER_LIFE_MS,
-  HALF_LETTER_LIFE_MS,
-  QUARTER_LETTER_LIFE_MS,
+  FULL_LETTER_LIFE_S,
+  HALF_LETTER_LIFE_S,
+  QUARTER_LETTER_LIFE_S,
   USER_COUNT_THRESHOLD,
   LETTER_COUNT_THRESHOLD,
 } from '../constants'
-import { runStoragePressureCleanup } from '../cleanup'
+import { runCleanup } from '../cleanup'
 
 export const lettersRoutes = new Hono<WorkerEnv>()
 
 function buildSlugPart(value: string): string {
-  return String(value)
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-z0-9-]/g, '')
+  return String(value).toLowerCase().trim().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 }
 
 function buildSlug(senderName: string, recipientName: string): string {
   return `${buildSlugPart(senderName)}-${buildSlugPart(recipientName)}`
+}
+
+function serializeLetter(letter: typeof letters.$inferSelect) {
+  return {
+    ...letter,
+    createdAt: letter.createdAt.getTime(),
+    openedAt: letter.openedAt ? letter.openedAt.getTime() : null,
+    repliedAt: letter.repliedAt ? letter.repliedAt.getTime() : null,
+    expiresAt: letter.expiresAt.getTime(),
+  }
 }
 
 lettersRoutes.get('/letters/slug-status', async (context) => {
@@ -38,7 +42,7 @@ lettersRoutes.get('/letters/slug-status', async (context) => {
 
   const slug = buildSlug(senderName, recipientName)
   const db = getDb(context.env)
-  const now = Date.now()
+  const now = new Date()
 
   const existingLetter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
@@ -48,7 +52,7 @@ lettersRoutes.get('/letters/slug-status', async (context) => {
 
   return context.json({
     available: false,
-    existingExpiresAt: existingLetter.expiresAt,
+    existingExpiresAt: existingLetter.expiresAt.getTime(),
   })
 })
 
@@ -64,10 +68,9 @@ lettersRoutes.post('/letters', async (context) => {
   }
 
   const db = getDb(context.env)
-  const now = Date.now()
+  const now = new Date()
 
   const slug = buildSlug(senderName, recipientName)
-
   const existingLetter = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
   if (existingLetter && existingLetter.expiresAt >= now) {
@@ -75,7 +78,7 @@ lettersRoutes.post('/letters', async (context) => {
       {
         error: 'This letter name is already taken',
         slug,
-        existingExpiresAt: existingLetter.expiresAt,
+        existingExpiresAt: existingLetter.expiresAt.getTime(),
       },
       409
     )
@@ -86,7 +89,7 @@ lettersRoutes.post('/letters', async (context) => {
   }
 
   const letterId = crypto.randomUUID()
-  const expiresAt = now + FULL_LETTER_LIFE_MS
+  const expiresAt = new Date(now.getTime() + FULL_LETTER_LIFE_S * 1000)
 
   await db.insert(letters).values({
     id: letterId,
@@ -108,7 +111,7 @@ lettersRoutes.post('/letters', async (context) => {
   const letterCount = letterCountResult[0]?.value ?? 0
 
   if (userCount >= USER_COUNT_THRESHOLD || letterCount >= LETTER_COUNT_THRESHOLD) {
-    await runStoragePressureCleanup(context.env)
+    await runCleanup(context.env)
   }
 
   return context.json({
@@ -124,7 +127,7 @@ lettersRoutes.get('/letters/:sender/:recipient', async (context) => {
   const slug = `${senderSlug}-${recipientSlug}`
 
   const db = getDb(context.env)
-  const now = Date.now()
+  const now = new Date()
 
   const letterRecord = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
@@ -132,7 +135,7 @@ lettersRoutes.get('/letters/:sender/:recipient', async (context) => {
   if (letterRecord.expiresAt < now) return context.json({ error: 'Expired' }, 410)
 
   if (letterRecord.status === 'pending') {
-    const shortenedExpiresAt = letterRecord.createdAt + HALF_LETTER_LIFE_MS
+    const shortenedExpiresAt = new Date(letterRecord.createdAt.getTime() + HALF_LETTER_LIFE_S * 1000)
 
     await db
       .update(letters)
@@ -145,7 +148,7 @@ lettersRoutes.get('/letters/:sender/:recipient', async (context) => {
   }
 
   return context.json({
-    ...letterRecord,
+    ...serializeLetter(letterRecord),
     config: JSON.parse(letterRecord.config),
   })
 })
@@ -164,12 +167,10 @@ lettersRoutes.post('/letters/:sender/:recipient/reply', async (context) => {
   const letterRecord = await db.select().from(letters).where(eq(letters.slug, slug)).get()
 
   if (!letterRecord) return context.json({ error: 'Not found' }, 404)
-  if (letterRecord.status === 'replied') {
-    return context.json({ error: 'Already replied' }, 409)
-  }
+  if (letterRecord.status === 'replied') return context.json({ error: 'Already replied' }, 409)
 
-  const now = Date.now()
-  const shortenedExpiresAt = letterRecord.createdAt + QUARTER_LETTER_LIFE_MS
+  const now = new Date()
+  const shortenedExpiresAt = new Date(letterRecord.createdAt.getTime() + QUARTER_LETTER_LIFE_S * 1000)
 
   await db
     .update(letters)
@@ -197,10 +198,10 @@ lettersRoutes.patch('/letters/:sender/:recipient/note', async (context) => {
 
   if (!letterRecord) return context.json({ error: 'Not found' }, 404)
 
-  const now = Date.now()
+  const now = new Date()
   const updateData: Record<string, unknown> = {
     replyNote: note ?? '',
-    expiresAt: letterRecord.createdAt + QUARTER_LETTER_LIFE_MS,
+    expiresAt: new Date(letterRecord.createdAt.getTime() + QUARTER_LETTER_LIFE_S * 1000),
   }
 
   if (letterRecord.status !== 'replied') {
@@ -226,7 +227,7 @@ lettersRoutes.get('/my-letters', async (context) => {
 
   return context.json(
     letterRows.map((letterRow) => ({
-      ...letterRow,
+      ...serializeLetter(letterRow),
       config: JSON.parse(letterRow.config),
     }))
   )
